@@ -44,8 +44,13 @@
 
 تقدر تبدل حتى مباشرة في الـ Google Sheet (الاسم، الوصف، الفئة...).
 
+## 🔔 الإشعارات
+- كي تزيد منتوج ولا تدير عرض من البوت، يتخلق إشعار وحدو (ورقة `Notifications` في الـ Sheet).
+- 📢 **إشعار للزبائن** في البوت: تكتب ميساج يوصل لكل اللي عندهم التطبيق. وتحت كل منتوج زر **📢 أعلن عليه للزبائن**.
+- التطبيق يشيك كل ~15 دقيقة (WorkManager) ويطلّع إشعار في التيليفون، وفيه صفحة 🔔 Notifications مع عدد اللي ما تقراوش.
+
 ## واش فيه التطبيق
-شبكة منتوجات بالصور • بحث • فلترة بالفئات + 🔥 Promos • صفحة تفاصيل • زر "Commander via WhatsApp" برسالة جاهزة فيها اسم المنتوج والرقم والسعر • يخدم بلا انترنت (آخر نسخة محفوظة) • سحب للتحديث.
+قائمة جانبية (Accueil، Promotions، Notifications، الفئات، WhatsApp، Appeler، Partager) • أيقونات SVG • شبكة منتوجات بالصور • بحث • فلترة بالفئات + 🔥 Promos • صفحة تفاصيل • زر "Commander via WhatsApp" برسالة جاهزة فيها اسم المنتوج والرقم والسعر • يخدم بلا انترنت (آخر نسخة محفوظة) • سحب للتحديث.
 
 ## 4) بناء الـAPK أوتوماتيك (GitHub Actions) — بلا Android Studio
 1. في GitHub: Settings ← Secrets and variables ← Actions ← **Variables** ← زيد:
@@ -55,3 +60,10 @@
 3. كي يكمل: افتح الـ run ← Artifacts ← حمّل `2freres-emballage-apk` ← فيه `app-debug.apk` تقدر تنصبو في التيليفون.
 
 > بناء محلي: `cd 2freres-emballage/android && ./gradlew assembleDebug`
+
+## 5) إذا البوت ما يردّش (مشكل 302) — relais Cloudflare مجاني
+Apps Script يردّ دايماً بـ 302 على تيليغرام، وتيليغرام يحبس الميساجات. الحل: Worker صغير في Cloudflare يردّ 200 ويبعث الميساج لـ Apps Script.
+1. أكاونت مجاني في https://dash.cloudflare.com ← **Workers & Pages** ← **Create** ← **Create Worker** ← **Deploy**.
+2. **Edit code** ← امسح الكود ← لصق `telegram-proxy/worker.js` (بعد ما تحط `APPS_SCRIPT_URL` و `SECRET`) ← **Deploy**.
+3. اربط البوت بالـ Worker:
+   `https://api.telegram.org/bot<TOKEN>/setWebhook?url=<WORKER_URL>&secret_token=<SECRET>&drop_pending_updates=true`

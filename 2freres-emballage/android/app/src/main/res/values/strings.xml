@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">2 Frères Emballage</string>
+    <string name="all">Tout</string>
+    <string name="promos">🔥 Promos</string>
+    <string name="search_hint">Rechercher un produit…</string>
+    <string name="offline">Pas de connexion — données enregistrées affichées</string>
+    <string name="retry">Réessayer</string>
+    <string name="empty_catalog">Aucun produit pour le moment</string>
+    <string name="no_results">Aucun résultat</string>
+    <string name="whatsapp">WhatsApp</string>
+    <string name="order">Commander via WhatsApp</string>
+    <string name="promo">PROMO</string>
+    <string name="ref">Réf #%1$d</string>
+    <string name="no_whatsapp">Impossible d\'ouvrir WhatsApp</string>
+    <string name="wa_general">Bonjour 2 Frères Emballage, j\'ai une question.</string>
+    <string name="wa_product">Bonjour, je suis intéressé(e) par : %1$s (Réf #%2$d) — %3$s</string>
+</resources>

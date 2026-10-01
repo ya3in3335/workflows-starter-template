@@ -15,4 +15,21 @@
     <string name="no_whatsapp">Impossible d\'ouvrir WhatsApp</string>
     <string name="wa_general">Bonjour 2 Frères Emballage, j\'ai une question.</string>
     <string name="wa_product">Bonjour, je suis intéressé(e) par : %1$s (Réf #%2$d) — %3$s</string>
+    <string name="tagline">Emballage &amp; packaging — catalogue</string>
+    <string name="nav_home">Accueil</string>
+    <string name="promos_plain">Promotions</string>
+    <string name="categories">Catégories</string>
+    <string name="contact">Contact</string>
+    <string name="call">Appeler</string>
+    <string name="share_app">Partager l\'application</string>
+    <string name="about">À propos</string>
+    <string name="open_menu">Ouvrir le menu</string>
+    <string name="notifications">Notifications</string>
+    <string name="no_notifications">Aucune notification pour le moment</string>
+    <string name="channel_name">Nouveautés et promos</string>
+    <string name="channel_desc">Nouveaux produits, promotions et messages du magasin</string>
+    <string name="notif_summary">%1$d nouveautés chez 2 Frères Emballage</string>
+    <string name="share_text">Découvrez le catalogue 2 Frères Emballage ! Commandez sur WhatsApp : https://wa.me/%1$s</string>
+    <string name="about_text">Catalogue des produits 2 Frères Emballage.\n\nCommandes et renseignements par WhatsApp ou par téléphone.\n\nVersion %1$s</string>
+    <string name="no_phone_app">Impossible d\'ouvrir le téléphone</string>
 </resources>

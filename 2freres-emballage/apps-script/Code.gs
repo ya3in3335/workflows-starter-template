@@ -2,6 +2,7 @@
  * 2 Frères Emballage — Backend gratuit (Google Sheets + Drive + Telegram)
  * - doGet  : API JSON lue par l'application Android
  * - doPost : Webhook du bot Telegram (panneau admin avec boutons)
+ * - Notifications : nouveaux produits / promos / messages, lues par l'application
  */
 const CONFIG = {
   BOT_TOKEN: 'COLLER_LE_TOKEN_DU_BOT_ICI',
@@ -14,18 +15,22 @@ const CONFIG = {
 const SHEET = 'Products';
 const HEADERS = ['id', 'name', 'price', 'oldPrice', 'category', 'description', 'image', 'fileId', 'isOffer', 'createdAt', 'hidden'];
 const PAGE_SIZE = 8;
+const NOTIF_SHEET = 'Notifications';
+const NOTIF_HEADERS = ['id', 'title', 'body', 'productId', 'image', 'createdAt'];
+const NOTIF_KEEP = 30;                 // nombre de notifications envoyées à l'application
 
 const BTN = {
   ADD: '➕ زيد منتوج',
   LIST: '📦 المنتوجات',
   PROMOS: '🔥 العروض',
   HELP: '❓ مساعدة',
+  NOTIFY: '📢 إشعار للزبائن',
   CANCEL: '❌ إلغاء',
   SKIP: '⏭️ تخطي'
 };
 
 const MENU = {
-  keyboard: [[{ text: BTN.ADD }, { text: BTN.LIST }], [{ text: BTN.PROMOS }, { text: BTN.HELP }]],
+  keyboard: [[{ text: BTN.ADD }, { text: BTN.LIST }], [{ text: BTN.PROMOS }, { text: BTN.NOTIFY }], [{ text: BTN.HELP }]],
   resize_keyboard: true,
   is_persistent: true
 };
@@ -39,6 +44,9 @@ const HELP = [
   '📸 ولا ابعث صورة ديراكت، والإضافة تبدا وحدها',
   '📦 المنتوجات: اختار منتوج باش تبدّل السعر، العرض، الاسم، الصورة… ولا تخبّيه ولا تمسحو',
   '🔥 العروض: المنتوجات اللي فيهم عرض',
+  '📢 إشعار للزبائن: تكتب ميساج ويوصل لكل اللي عندهم التطبيق',
+  '',
+  '🔔 كي تزيد منتوج ولا تدير عرض، الزبائن يوصلهم إشعار وحدو',
   '',
   '❌ إلغاء: يحبس أي عملية'
 ].join('\n');
@@ -92,7 +100,8 @@ function doGet() {
     store: CONFIG.STORE_NAME,
     currency: CONFIG.CURRENCY,
     updatedAt: new Date().toISOString(),
-    products: products                     // plus récents en premier
+    products: products,                    // plus récents en premier
+    notifications: readNotifs_().slice(-NOTIF_KEEP).reverse()
   };
   return ContentService.createTextOutput(JSON.stringify(out))
     .setMimeType(ContentService.MimeType.JSON);
@@ -177,10 +186,20 @@ function handleMessage(msg) {
     clearState(chatId);
     return sendList(chatId, 0, true);
   }
+  if (text === BTN.NOTIFY) {
+    setState(chatId, { step: 'notify' });
+    return send(chatId, '📢 اكتب الميساج اللي يوصل للزبائن في التطبيق:\n(مثال: وصلت سلعة جديدة! 🎉)', CANCEL_KB);
+  }
   if (cmd.startsWith('/')) return legacyCommand(chatId, text);
 
   const state = getState(chatId);
   if (state && state.step === 'edit') return applyEdit(chatId, msg, state, text);
+  if (state && state.step === 'notify') {
+    if (!text) return send(chatId, '📢 اكتب الميساج.', CANCEL_KB);
+    notif_(CONFIG.STORE_NAME, text, 0, '');
+    clearState(chatId);
+    return send(chatId, '✅ الإشعار تبعث. يوصل للزبائن خلال 15 دقيقة تقريباً.', MENU);
+  }
   if (state) return wizard(chatId, msg, state, text);
 
   // Photo envoyée sans rien : on démarre l'ajout directement
@@ -224,7 +243,8 @@ function wizard(chatId, msg, st, text) {
       st.description = (text === BTN.SKIP || text === '/skip') ? '' : text;
       const id = addProduct(st);
       clearState(chatId);
-      send(chatId, '✅ المنتوج تزاد (رقم ' + id + '). راهو يبان في التطبيق.', MENU);
+      notif_('🆕 Nouveau produit', st.name + ' — ' + fmt(st.price), id, st.image);
+      send(chatId, '✅ المنتوج تزاد (رقم ' + id + '). راهو يبان في التطبيق.\n🔔 الزبائن يوصلهم إشعار.', MENU);
       return sendCard(chatId, id);
     }
   }
@@ -262,6 +282,16 @@ function handleCallback(q) {
       if (hidden === null) return send(chatId, '⚠️ المنتوج ما كانش.', MENU);
       send(chatId, hidden ? '🙈 المنتوج تخبّى من التطبيق.' : '👁️ المنتوج رجع يبان في التطبيق.', MENU);
       return sendCard(chatId, id);
+    }
+    case 'n': {
+      const p = readAll().filter(x => x.id === id)[0];
+      if (!p) return send(chatId, '⚠️ المنتوج ما كانش.', MENU);
+      if (p.isOffer && p.oldPrice > p.price) {
+        notif_('🔥 Promo', p.name + ' : ' + fmt(p.price) + ' au lieu de ' + fmt(p.oldPrice), p.id, p.image);
+      } else {
+        notif_('✨ ' + CONFIG.STORE_NAME, p.name + ' — ' + fmt(p.price), p.id, p.image);
+      }
+      return send(chatId, '📢 الإشعار تبعث على: ' + p.name + '\nيوصل للزبائن خلال 15 دقيقة تقريباً.', MENU);
     }
     case 'd':
       return send(chatId, '🗑️ متأكد تحب تمسح المنتوج رقم ' + id + '؟', deleteConfirmKb_(id));
@@ -304,6 +334,8 @@ function applyEdit(chatId, msg, st, text) {
       sh.getRange(row, col_('price')).setValue(p);
       sh.getRange(row, col_('oldPrice')).setValue(old);
       sh.getRange(row, col_('isOffer')).setValue(true);
+      notif_('🔥 Promo', sh.getRange(row, col_('name')).getValue() + ' : ' + fmt(p) + ' au lieu de ' + fmt(old),
+        st.id, sh.getRange(row, col_('image')).getValue());
       break;
     }
     case 'name':
@@ -377,7 +409,8 @@ function sendCard(chatId, id) {
     [{ text: '📝 الوصف', callback_data: 'e:' + id + ':description' },
      { text: '🖼️ الصورة', callback_data: 'e:' + id + ':image' }],
     [{ text: p.hidden ? '👁️ ورّيه' : '🙈 خبّيه', callback_data: 'h:' + id },
-     { text: '🗑️ امسح', callback_data: 'd:' + id }]
+     { text: '🗑️ امسح', callback_data: 'd:' + id }],
+    [{ text: '📢 أعلن عليه للزبائن', callback_data: 'n:' + id }]
   ] };
 
   const r = sendPhoto_(chatId, p, caption, kb);
@@ -452,6 +485,49 @@ function legacyCommand(chatId, text) {
     default:
       return send(chatId, HELP, MENU);
   }
+}
+
+/* ---------- Notifications pour l'application ---------- */
+
+function notifSheet_() {
+  const ss = SpreadsheetApp.getActive();
+  let sh = ss.getSheetByName(NOTIF_SHEET);
+  if (!sh) {
+    sh = ss.insertSheet(NOTIF_SHEET);
+    sh.getRange(1, 1, 1, NOTIF_HEADERS.length).setValues([NOTIF_HEADERS]).setFontWeight('bold');
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+function notif_(title, body, productId, image) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const id = Number(props.getProperty('NEXT_NID') || '1');
+    props.setProperty('NEXT_NID', String(id + 1));
+    notifSheet_().appendRow([id, title, body, productId || '', image || '', new Date()]);
+    return id;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function readNotifs_() {
+  const sh = notifSheet_();
+  const last = sh.getLastRow();
+  if (last < 2) return [];
+  return sh.getRange(2, 1, last - 1, NOTIF_HEADERS.length).getValues()
+    .filter(r => r[0] !== '')
+    .map(r => ({
+      id: Number(r[0]),
+      title: String(r[1]),
+      body: String(r[2]),
+      productId: Number(r[3]) || 0,
+      image: String(r[4]),
+      createdAt: r[5] instanceof Date ? r[5].toISOString() : String(r[5])
+    }));
 }
 
 function savePhoto(fileId) {

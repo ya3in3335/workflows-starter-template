@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/group_main" android:checkableBehavior="single">
+        <item android:id="@+id/nav_home" android:icon="@drawable/ic_home" android:title="@string/nav_home" android:checked="true" />
+        <item android:id="@+id/nav_promos" android:icon="@drawable/ic_fire" android:title="@string/promos_plain" />
+        <item android:id="@+id/nav_notifications" android:icon="@drawable/ic_bell" android:title="@string/notifications" />
+    </group>
+    <item android:id="@+id/nav_categories" android:title="@string/categories">
+        <menu />
+    </item>
+    <item android:id="@+id/nav_contact" android:title="@string/contact">
+        <menu>
+            <item android:id="@+id/nav_whatsapp" android:icon="@drawable/ic_chat" android:title="@string/whatsapp" />
+            <item android:id="@+id/nav_call" android:icon="@drawable/ic_phone" android:title="@string/call" />
+            <item android:id="@+id/nav_share" android:icon="@drawable/ic_share" android:title="@string/share_app" />
+            <item android:id="@+id/nav_about" android:icon="@drawable/ic_info" android:title="@string/about" />
+        </menu>
+    </item>
+</menu>

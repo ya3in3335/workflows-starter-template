@@ -14,17 +14,15 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/** Charge les produits depuis l'API + garde une copie hors-ligne. */
+/** Charge le catalogue depuis l'API + garde une copie hors-ligne. */
 public class ProductRepository {
 
     public interface Callback {
-        /** error == null si chargé depuis Internet, sinon products = cache. */
-        void onResult(List<Product> products, String error);
+        /** error == null si chargé depuis Internet, sinon catalog = cache. */
+        void onResult(Catalog catalog, String error);
     }
 
     private static final ExecutorService EXEC = Executors.newSingleThreadExecutor();
@@ -32,39 +30,50 @@ public class ProductRepository {
     private final Handler main = new Handler(Looper.getMainLooper());
 
     public ProductRepository(Context ctx) {
-        prefs = ctx.getSharedPreferences("catalog_cache", Context.MODE_PRIVATE);
+        prefs = ctx.getApplicationContext().getSharedPreferences("catalog_cache", Context.MODE_PRIVATE);
     }
 
-    public List<Product> cached() {
+    public Catalog cached() {
         String json = prefs.getString("json", null);
-        if (json == null) return new ArrayList<>();
+        if (json == null) return new Catalog();
         try {
             return parse(json);
         } catch (Exception e) {
-            return new ArrayList<>();
+            return new Catalog();
         }
     }
 
     public void load(Callback cb) {
         EXEC.execute(() -> {
             try {
-                String json = get(Config.API_URL);
-                List<Product> list = parse(json);
-                prefs.edit().putString("json", json).apply();
-                main.post(() -> cb.onResult(list, null));
+                Catalog c = fetch();
+                main.post(() -> cb.onResult(c, null));
             } catch (Exception e) {
-                List<Product> list = cached();
+                Catalog c = cached();
                 String msg = e.getMessage() == null ? "error" : e.getMessage();
-                main.post(() -> cb.onResult(list, msg));
+                main.post(() -> cb.onResult(c, msg));
             }
         });
     }
 
-    private static List<Product> parse(String json) throws Exception {
-        JSONArray arr = new JSONObject(json).getJSONArray("products");
-        List<Product> out = new ArrayList<>();
-        for (int i = 0; i < arr.length(); i++) out.add(Product.from(arr.getJSONObject(i)));
-        return out;
+    /** Appel bloquant (à utiliser hors du thread principal). */
+    public Catalog fetch() throws Exception {
+        String json = get(Config.API_URL);
+        Catalog c = parse(json);
+        prefs.edit().putString("json", json).apply();
+        return c;
+    }
+
+    private static Catalog parse(String json) throws Exception {
+        JSONObject root = new JSONObject(json);
+        Catalog c = new Catalog();
+        JSONArray arr = root.getJSONArray("products");
+        for (int i = 0; i < arr.length(); i++) c.products.add(Product.from(arr.getJSONObject(i)));
+        JSONArray notifs = root.optJSONArray("notifications");
+        if (notifs != null) {
+            for (int i = 0; i < notifs.length(); i++) c.notifications.add(AppNotification.from(notifs.getJSONObject(i)));
+        }
+        return c;
     }
 
     private static String get(String url) throws IOException {

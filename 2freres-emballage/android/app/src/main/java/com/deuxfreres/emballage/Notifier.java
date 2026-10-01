@@ -40,10 +40,22 @@ final class Notifier {
         WorkManager.getInstance(ctx).enqueueUniquePeriodicWork("catalog_check", ExistingPeriodicWorkPolicy.KEEP, req);
     }
 
+    static boolean enabled(Context ctx) {
+        return NotificationManagerCompat.from(ctx).areNotificationsEnabled();
+    }
+
+    /** Ouvre les réglages de notifications de l'application. */
+    static void openSettings(Context ctx) {
+        Intent i = new Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                .putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, ctx.getPackageName())
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        ctx.startActivity(i);
+    }
+
     static void createChannel(Context ctx) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel ch = new NotificationChannel(CHANNEL,
-                    ctx.getString(R.string.channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+                    ctx.getString(R.string.channel_name), NotificationManager.IMPORTANCE_HIGH);
             ch.setDescription(ctx.getString(R.string.channel_desc));
             ctx.getSystemService(NotificationManager.class).createNotificationChannel(ch);
         }
@@ -98,6 +110,7 @@ final class Notifier {
 
         if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(ctx,
                 Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return;
+        if (!enabled(ctx)) return;
         createChannel(ctx);
         NotificationManagerCompat nm = NotificationManagerCompat.from(ctx);
 
@@ -132,6 +145,8 @@ final class Notifier {
                 .setSmallIcon(R.drawable.ic_stat_box)
                 .setColor(ContextCompat.getColor(ctx, R.color.card_pink))
                 .setContentIntent(pi)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setAutoCancel(true);
     }
 }

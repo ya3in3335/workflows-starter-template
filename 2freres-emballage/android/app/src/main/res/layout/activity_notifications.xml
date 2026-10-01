@@ -16,6 +16,34 @@
         app:title="@string/notifications"
         app:titleTextColor="#FFFFFF" />
 
+    <LinearLayout
+        android:id="@+id/offBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFF3E0"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="8dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/notif_off"
+            android:textColor="#5D4037"
+            android:textSize="13sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/enable"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enable"
+            android:textColor="@color/promo" />
+    </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

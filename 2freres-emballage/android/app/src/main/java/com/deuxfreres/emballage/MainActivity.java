@@ -63,7 +63,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView bellCount;
 
     private final ActivityResultLauncher<String> askNotifications =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {});
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
+                if (granted) askBackgroundOnce();
+                else showNotificationsOff();
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,7 +194,42 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this,
                 Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS);
+        } else if (!Notifier.enabled(this)) {
+            showNotificationsOff();
+        } else {
+            askBackgroundOnce();
         }
+    }
+
+    private void showNotificationsOff() {
+        Snackbar.make(swipe, R.string.notif_off, Snackbar.LENGTH_LONG)
+                .setAction(R.string.enable, v -> Notifier.openSettings(this))
+                .show();
+    }
+
+    /**
+     * Certains téléphones (Xiaomi, Samsung, Oppo…) coupent les tâches en arrière-plan.
+     * On demande une seule fois de laisser l'application vérifier les nouveautés quand elle est fermée.
+     */
+    private void askBackgroundOnce() {
+        android.os.PowerManager pm = (android.os.PowerManager) getSystemService(POWER_SERVICE);
+        if (pm == null || pm.isIgnoringBatteryOptimizations(getPackageName())) return;
+        android.content.SharedPreferences prefs = getSharedPreferences("notifications", MODE_PRIVATE);
+        if (prefs.getBoolean("asked_battery", false)) return;
+        prefs.edit().putBoolean("asked_battery", true).apply();
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.battery_title)
+                .setMessage(R.string.battery_text)
+                .setPositiveButton(R.string.allow, (d, w) -> {
+                    try {
+                        startActivity(new Intent(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                                android.net.Uri.parse("package:" + getPackageName())));
+                    } catch (Exception e) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
+                    }
+                })
+                .setNegativeButton(R.string.later, null)
+                .show();
     }
 
     private void load() {

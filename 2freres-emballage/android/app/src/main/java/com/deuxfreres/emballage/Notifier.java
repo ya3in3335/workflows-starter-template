@@ -130,7 +130,7 @@ final class Notifier {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         return new NotificationCompat.Builder(ctx, CHANNEL)
                 .setSmallIcon(R.drawable.ic_stat_box)
-                .setColor(ContextCompat.getColor(ctx, R.color.brand))
+                .setColor(ContextCompat.getColor(ctx, R.color.card_pink))
                 .setContentIntent(pi)
                 .setAutoCancel(true);
     }

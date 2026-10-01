@@ -7,7 +7,8 @@
 const CONFIG = {
   BOT_TOKEN: 'COLLER_LE_TOKEN_DU_BOT_ICI',
   ADMIN_IDS: [123456789],            // ID(s) Telegram des admins
-  WEB_APP_URL: 'COLLER_URL_WEB_APP_ICI',
+  WEB_APP_URL: 'COLLER_URL_WEB_APP_ICI',  // URL du relais Cloudflare (voir telegram-proxy/), sinon l'URL /exec
+  WEBHOOK_SECRET: '',                     // même SECRET que dans telegram-proxy/worker.js
   STORE_NAME: '2 Frères Emballage',
   CURRENCY: 'DA'
 };
@@ -76,11 +77,13 @@ function setup() {
 }
 
 function setWebhook() {
-  Logger.log(JSON.stringify(tg('setWebhook', {
+  const params = {
     url: CONFIG.WEB_APP_URL,
     drop_pending_updates: true,
     allowed_updates: ['message', 'callback_query']
-  })));
+  };
+  if (CONFIG.WEBHOOK_SECRET) params.secret_token = CONFIG.WEBHOOK_SECRET;
+  Logger.log(JSON.stringify(tg('setWebhook', params)));
 }
 
 /* ===================== API POUR L'APPLICATION ===================== */

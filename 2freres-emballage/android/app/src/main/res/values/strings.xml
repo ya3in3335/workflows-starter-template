@@ -70,4 +70,10 @@
         <item quantity="one">%d avis</item>
         <item quantity="other">%d avis</item>
     </plurals>
+    <string name="notif_off">Les notifications sont désactivées : vous ne recevrez pas les promos et nouveautés.</string>
+    <string name="enable">Activer</string>
+    <string name="battery_title">Recevoir les promos</string>
+    <string name="battery_text">Pour recevoir les nouveautés et les promos même quand l\'application est fermée, autorisez-la à fonctionner en arrière-plan.</string>
+    <string name="allow">Autoriser</string>
+    <string name="later">Plus tard</string>
 </resources>

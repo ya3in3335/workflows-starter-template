@@ -36,11 +36,19 @@ public class NotificationsActivity extends AppCompatActivity {
         });
         list.setAdapter(adapter);
 
+        findViewById(R.id.enable).setOnClickListener(v -> Notifier.openSettings(this));
+
         repo = new ProductRepository(this);
         show(repo.cached());
         repo.load((c, error) -> {
             if (!isDestroyed()) show(c);
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        findViewById(R.id.offBanner).setVisibility(Notifier.enabled(this) ? View.GONE : View.VISIBLE);
     }
 
     private void show(Catalog c) {

@@ -1,0 +1,48 @@
+name: Build Android APK (2 Frères Emballage)
+
+on:
+  push:
+    paths:
+      - "2freres-emballage/android/**"
+      - ".github/workflows/android-apk.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 2freres-emballage/android
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      # Optional: set repository variables API_URL and WHATSAPP_NUMBER
+      # (Settings → Secrets and variables → Actions → Variables)
+      # to inject them into Config.java without editing the code.
+      - name: Inject config
+        env:
+          API_URL: ${{ vars.API_URL }}
+          WHATSAPP_NUMBER: ${{ vars.WHATSAPP_NUMBER }}
+        run: |
+          CFG=app/src/main/java/com/deuxfreres/emballage/Config.java
+          if [ -n "$API_URL" ]; then
+            sed -i "s|API_URL = \".*\";|API_URL = \"$API_URL\";|" "$CFG"
+          fi
+          if [ -n "$WHATSAPP_NUMBER" ]; then
+            sed -i "s|WHATSAPP_NUMBER = \".*\";|WHATSAPP_NUMBER = \"$WHATSAPP_NUMBER\";|" "$CFG"
+          fi
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 2freres-emballage-apk
+          path: 2freres-emballage/android/app/build/outputs/apk/debug/app-debug.apk

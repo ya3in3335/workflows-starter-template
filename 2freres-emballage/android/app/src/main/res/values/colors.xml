@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand">#1E5B3A</color>
+    <color name="brand_dark">#143F28</color>
+    <color name="kraft">#C8A165</color>
+    <color name="kraft_light">#F4EBDD</color>
+    <color name="promo">#D84315</color>
+    <color name="bg">#FAF7F2</color>
+    <color name="text_secondary">#757575</color>
+    <color name="whatsapp">#25D366</color>
+</resources>

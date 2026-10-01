@@ -1,6 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Logo 2 Frères : « 2 » blanc + FRÈRES rose (d'après la carte du magasin) -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp" android:height="24dp"
     android:viewportWidth="24" android:viewportHeight="24">
-    <path android:fillColor="#FFFFFFFF"
-        android:pathData="M12,2L21,6.5V17.5L12,22L3,17.5V6.5ZM12,4.2L6.4,7L12,9.8L17.6,7ZM5,8.6V16.3L11,19.3V11.6ZM13,11.6V19.3L19,16.3V8.6Z" />
+    <group android:translateX="-2.317" android:translateY="-6.112" android:scaleX="0.345" android:scaleY="0.345">
+        <path android:pathData="M28,44 A14,14 0 1 1 52,53.5 L30,76.5 H60" android:fillColor="#00000000" android:strokeColor="#FFFFFFFF" android:strokeWidth="9.855" android:strokeLineJoin="bevel" android:strokeLineCap="butt" />
+    </group>
 </vector>

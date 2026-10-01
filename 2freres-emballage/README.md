@@ -55,3 +55,10 @@
 3. كي يكمل: افتح الـ run ← Artifacts ← حمّل `2freres-emballage-apk` ← فيه `app-debug.apk` تقدر تنصبو في التيليفون.
 
 > بناء محلي: `cd 2freres-emballage/android && ./gradlew assembleDebug`
+
+## 5) إذا البوت ما يردّش (مشكل 302) — relais Cloudflare مجاني
+Apps Script يردّ دايماً بـ 302 على تيليغرام، وتيليغرام يحبس الميساجات. الحل: Worker صغير في Cloudflare يردّ 200 ويبعث الميساج لـ Apps Script.
+1. أكاونت مجاني في https://dash.cloudflare.com ← **Workers & Pages** ← **Create** ← **Create Worker** ← **Deploy**.
+2. **Edit code** ← امسح الكود ← لصق `telegram-proxy/worker.js` (بعد ما تحط `APPS_SCRIPT_URL` و `SECRET`) ← **Deploy**.
+3. اربط البوت بالـ Worker:
+   `https://api.telegram.org/bot<TOKEN>/setWebhook?url=<WORKER_URL>&secret_token=<SECRET>&drop_pending_updates=true`

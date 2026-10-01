@@ -33,10 +33,15 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
@@ -112,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(v -> Utils.openWhatsApp(this, getString(R.string.wa_general)));
 
         swipe.setColorSchemeResources(R.color.brand);
-        swipe.setOnRefreshListener(this::load);
+        swipe.setOnRefreshListener(() -> { load(); loadRatings(); });
 
         Notifier.createChannel(this);
         Notifier.schedule(this);
@@ -136,6 +141,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         updateBell();
+        updateAccount();
+        loadRatings();
+    }
+
+    private void updateAccount() {
+        boolean in = Session.loggedIn(this);
+        MenuItem acc = nav.getMenu().findItem(R.id.nav_account);
+        acc.setTitle(in ? getString(R.string.hello_user, Session.username(this)) : getString(R.string.login));
+        nav.getMenu().findItem(R.id.nav_logout).setVisible(in);
+    }
+
+    /** Notes moyennes affichées sous chaque produit. */
+    private void loadRatings() {
+        ApiClient.EXEC.execute(() -> {
+            try {
+                JSONObject r = ApiClient.call("GET", "/api/ratings", null, null).getJSONObject("ratings");
+                Map<Integer, double[]> map = new HashMap<>();
+                for (Iterator<String> it = r.keys(); it.hasNext(); ) {
+                    String k = it.next();
+                    JSONObject o = r.getJSONObject(k);
+                    map.put(Integer.parseInt(k), new double[]{o.optDouble("avg"), o.optInt("count")});
+                }
+                runOnUiThread(() -> { if (!isDestroyed()) adapter.setRatings(map); });
+            } catch (Exception ignored) {
+            }
+        });
     }
 
     /** Ouverture depuis une notification système. */
@@ -212,6 +243,16 @@ public class MainActivity extends AppCompatActivity {
             setFilter(PROMO);
         } else if (id == R.id.nav_notifications) {
             openNotifications();
+        } else if (id == R.id.nav_account) {
+            if (!Session.loggedIn(this)) startActivity(new Intent(this, LoginActivity.class));
+        } else if (id == R.id.nav_logout) {
+            String token = Session.token(this);
+            Session.clear(this);
+            updateAccount();
+            Snackbar.make(swipe, R.string.logged_out, Snackbar.LENGTH_SHORT).show();
+            ApiClient.EXEC.execute(() -> {
+                try { ApiClient.call("POST", "/api/logout", new JSONObject(), token); } catch (Exception ignored) {}
+            });
         } else if (id == R.id.nav_whatsapp) {
             Utils.openWhatsApp(this, getString(R.string.wa_general));
         } else if (id == R.id.nav_call) {

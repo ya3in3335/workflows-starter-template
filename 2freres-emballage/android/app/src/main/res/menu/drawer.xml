@@ -5,6 +5,10 @@
         <item android:id="@+id/nav_promos" android:icon="@drawable/ic_fire" android:title="@string/promos_plain" />
         <item android:id="@+id/nav_notifications" android:icon="@drawable/ic_bell" android:title="@string/notifications" />
     </group>
+    <group android:id="@+id/group_account">
+        <item android:id="@+id/nav_account" android:icon="@drawable/ic_person" android:title="@string/login" />
+        <item android:id="@+id/nav_logout" android:icon="@drawable/ic_logout" android:title="@string/logout" android:visible="false" />
+    </group>
     <item android:id="@+id/nav_categories" android:title="@string/categories">
         <menu />
     </item>

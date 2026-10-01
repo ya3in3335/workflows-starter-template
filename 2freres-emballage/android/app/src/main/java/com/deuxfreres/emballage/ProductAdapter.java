@@ -13,7 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.VH> {
 
@@ -21,6 +24,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.VH> {
 
     private final List<Product> items = new ArrayList<>();
     private final OnClick onClick;
+    private Map<Integer, double[]> ratings = new HashMap<>();   // id -> {moyenne, nombre}
+
+    public void setRatings(Map<Integer, double[]> r) {
+        ratings = r;
+        notifyDataSetChanged();
+    }
 
     public ProductAdapter(OnClick onClick) { this.onClick = onClick; }
 
@@ -51,13 +60,20 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.VH> {
         } else {
             h.oldPrice.setVisibility(View.GONE);
         }
+        double[] r = ratings.get(p.id);
+        if (r != null && r[1] > 0) {
+            h.rating.setVisibility(View.VISIBLE);
+            h.rating.setText(String.format(Locale.FRANCE, "★ %.1f (%d)", r[0], (int) r[1]));
+        } else {
+            h.rating.setVisibility(View.GONE);
+        }
         h.itemView.setOnClickListener(v -> onClick.onProduct(p));
     }
 
     @Override public int getItemCount() { return items.size(); }
 
     static class VH extends RecyclerView.ViewHolder {
-        final ImageView image; final TextView name, price, oldPrice, badge;
+        final ImageView image; final TextView name, price, oldPrice, badge, rating;
         VH(View v) {
             super(v);
             image = v.findViewById(R.id.image);
@@ -65,6 +81,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.VH> {
             price = v.findViewById(R.id.price);
             oldPrice = v.findViewById(R.id.oldPrice);
             badge = v.findViewById(R.id.badge);
+            rating = v.findViewById(R.id.rating);
         }
     }
 }

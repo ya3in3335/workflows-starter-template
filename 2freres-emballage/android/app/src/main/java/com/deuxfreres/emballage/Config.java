@@ -8,6 +8,8 @@ public final class Config {
     public static final String WHATSAPP_NUMBER = "213555053539";
     /** Numéro pour le bouton "Appeler" */
     public static final String PHONE_NUMBER = "+213555053539";
+    /** API des comptes et avis (Cloudflare Worker + D1) */
+    public static final String API_BASE = "https://flat-violet-af44.yacincianai.workers.dev";
     public static final String STORE_NAME = "2 Frères Emballage";
     public static final String CURRENCY = "DA";
 

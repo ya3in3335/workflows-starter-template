@@ -67,3 +67,9 @@ Apps Script يردّ دايماً بـ 302 على تيليغرام، وتيلي�
 2. **Edit code** ← امسح الكود ← لصق `telegram-proxy/worker.js` (بعد ما تحط `APPS_SCRIPT_URL` و `SECRET`) ← **Deploy**.
 3. اربط البوت بالـ Worker:
    `https://api.telegram.org/bot<TOKEN>/setWebhook?url=<WORKER_URL>&secret_token=<SECRET>&drop_pending_updates=true`
+
+## 💬 الحسابات والتعليقات (Cloudflare D1 مجاني)
+- التطبيق: تسجيل دخول بـ يوزر + كلمة سر، تقييم ⭐ وتعليق على كل منتوج، إعجابات 👍، متوسط التقييم على كل منتوج.
+- البوت: كل تعليق يوصلك مع أزرار ↩️ ردّ (يبان كـ "Réponse du magasin") / 🗑️ امسح / 🚫 بلوكي.
+- السيرفر: `telegram-proxy/worker.js` + الداتاباز `telegram-proxy/schema.sql` (binding `DB`).
+  Variables: `APPS_SCRIPT_URL`, `ADMIN_IDS` — Secrets: `TG_SECRET`, `BOT_TOKEN`.

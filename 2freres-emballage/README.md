@@ -74,3 +74,7 @@ Apps Script يردّ دايماً بـ 302 على تيليغرام، وتيلي�
 - السيرفر: `telegram-proxy/worker.js` + الداتاباز `telegram-proxy/schema.sql` (binding `DB`).
   Variables: `APPS_SCRIPT_URL`, `ADMIN_IDS` — Secrets: `TG_SECRET`, `BOT_TOKEN`.
 - منشور: Worker `flat-violet-af44` + D1 `freres` (id `2c249bef-8795-45b5-b336-d97d95e02ed5`).
+
+## 📥 رابط التحميل للموقع
+https://github.com/ya3in3335/workflows-starter-template/raw/main/download/2FreresEmballage.apk
+(الملف `download/2FreresEmballage.apk` في المستودع — كل نسخة جديدة تتبدّل في نفس البلاصة والرابط يبقى نفسو.)

@@ -142,7 +142,7 @@ public class SplashActivity extends AppCompatActivity {
             ImageView s = new ImageView(this);
             s.setImageResource(R.drawable.ic_sparkle);
             s.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(size, size);
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(size, size, android.view.Gravity.TOP | android.view.Gravity.LEFT);
             lp.leftMargin = rnd.nextInt(Math.max(1, w - size));
             lp.topMargin = rnd.nextInt(Math.max(1, h - size));
             box.addView(s, lp);

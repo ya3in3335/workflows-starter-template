@@ -514,6 +514,9 @@ async function adminApi(env, ctx, url, path, method, body, admin) {
     return json({ ok: true });
   }
 
+  /* ---- IA : reconnaître quel produit est sur une photo ---- */
+  if (path === '/api/admin/ai/match' && method === 'POST') return aiMatch(env, body);
+
   /* ---- Notifications ---- */
   if (path === '/api/admin/notifications' && method === 'GET') {
     const { results } = await DB.prepare(
@@ -608,4 +611,44 @@ async function adminApi(env, ctx, url, path, method, body, admin) {
   }
 
   return err('not_found', 404);
+}
+
+/* ===================== IA (Cloudflare Workers AI, gratuit) ===================== */
+
+const VISION_MODEL = '@cf/meta/llama-3.2-11b-vision-instruct';
+
+async function runVision(env, input) {
+  try {
+    return await env.AI.run(VISION_MODEL, input);
+  } catch (e) {
+    // Ce modèle demande d'accepter sa licence une seule fois.
+    if (/agree/i.test(String(e && e.message || e))) {
+      await env.AI.run(VISION_MODEL, { prompt: 'agree' }).catch(() => {});
+      return env.AI.run(VISION_MODEL, input);
+    }
+    throw e;
+  }
+}
+
+/** { imageId, names: ["Boîte pizza", ...] } → { index } (−1 si aucun ne correspond) */
+async function aiMatch(env, body) {
+  const names = Array.isArray(body.names) ? body.names.map(n => String(n).slice(0, 120)).slice(0, 80) : [];
+  const id = imageRef(body.imageId);
+  if (!names.length || !/^[a-f0-9]{8,64}$/.test(id)) return err('bad_request', 400);
+  const img = await env.DB.prepare('SELECT data FROM images WHERE id = ?').bind(id).first();
+  if (!img) return err('not_found', 404);
+  const list = names.map((n, i) => (i + 1) + '. ' + n).join('\n');
+  const out = await runVision(env, {
+    image: [...new Uint8Array(img.data)],
+    messages: [
+      { role: 'system', content: 'You match product photos of a packaging and gift shop to product names. Reply with the number only.' },
+      { role: 'user', content: 'Which product from this list is shown in the photo?\n' + list +
+        '\nAnswer with only the number of the best matching product (or 0 if none match).' }
+    ],
+    max_tokens: 8,
+    temperature: 0
+  });
+  const text = String((out && (out.response || out.description)) || '');
+  const n = parseInt((text.match(/\d+/) || ['0'])[0], 10);
+  return json({ index: n >= 1 && n <= names.length ? n - 1 : -1, raw: text.slice(0, 40) });
 }

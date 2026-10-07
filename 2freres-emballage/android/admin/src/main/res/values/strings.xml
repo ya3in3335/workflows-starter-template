@@ -107,4 +107,17 @@
     <string name="channel_name">رسائل وتعليقات الزبائن</string>
     <string name="alert_messages">💬 %1$d رسالة جديدة من الزبائن</string>
     <string name="alert_reviews">⭐ تعليق جديد على المنتوجات</string>
+    <string name="bulk">📸 إضافة بالجملة</string>
+    <string name="bulk_pick">اختار الصور (%1$d)</string>
+    <string name="bulk_list_hint">كل منتوج في سطر:
+Boîte pizza 33cm - 1500
+Gobelet carton 25cl - 30</string>
+    <string name="bulk_match">🤖 اربط الصور بالأسامي</string>
+    <string name="bulk_save">✅ حفظ الكل (%1$d)</string>
+    <string name="bulk_working">راني نخدم… %1$d / %2$d</string>
+    <string name="bulk_need">اختار صور واكتب القائمة</string>
+    <string name="bulk_none">ما ربطتهاش — اضغط باش تختار</string>
+    <string name="bulk_skip">بلا منتوج (ما تتحفظش)</string>
+    <string name="bulk_done">تزادو %1$d منتوج ✅</string>
+    <string name="bulk_tap">اضغط على صورة باش تبدّل المنتوج</string>
 </resources>

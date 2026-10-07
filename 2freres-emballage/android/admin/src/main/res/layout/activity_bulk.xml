@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/bg" android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar" android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
+        android:background="@color/dark" app:navigationIcon="?attr/homeAsUpIndicator"
+        app:navigationIconTint="#FFFFFF" app:title="@string/bulk" app:titleTextColor="#FFFFFF" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list" android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="1" android:clipToPadding="false" android:paddingBottom="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:background="#FFFFFF" android:elevation="8dp" android:orientation="vertical" android:padding="12dp">
+
+        <TextView
+            android:id="@+id/status" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp" android:textColor="@color/muted" android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/pick" style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent" android:layout_height="52dp" app:icon="@drawable/ic_photo" />
+
+        <EditText
+            android:id="@+id/lines" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" android:background="@drawable/bg_input" android:gravity="top"
+            android:hint="@string/bulk_list_hint" android:importantForAutofill="no"
+            android:inputType="textMultiLine" android:maxLines="6" android:minLines="3" android:padding="12dp"
+            android:textDirection="ltr" />
+
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" android:gravity="center_vertical" android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/category" android:layout_width="0dp" android:layout_height="48dp"
+                android:layout_weight="1" android:background="@drawable/bg_input" android:hint="@string/category"
+                android:importantForAutofill="no" android:inputType="text" android:paddingHorizontal="12dp" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/notify" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:checked="true" android:text="🔔" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/match" android:layout_width="match_parent" android:layout_height="54dp"
+            android:layout_marginTop="6dp" android:text="@string/bulk_match"
+            app:backgroundTint="@color/dark" app:cornerRadius="14dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/save" android:layout_width="match_parent" android:layout_height="54dp"
+            android:enabled="false" app:backgroundTint="@color/pink" app:cornerRadius="14dp" />
+    </LinearLayout>
+</LinearLayout>

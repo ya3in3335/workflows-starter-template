@@ -151,7 +151,7 @@ public class ProductEditActivity extends AppCompatActivity {
                 body.put("description", description.getText().toString().trim());
                 body.put("hidden", hidden.isChecked());
                 body.put("notify", notify.isChecked());
-                if (newPhoto != null) body.put("image", Api.upload(this, compress(newPhoto)).getString("id"));
+                if (newPhoto != null) body.put("image", Api.upload(this, compress(this, newPhoto)).getString("id"));
                 Api.call(this, "POST", "/api/admin/products", body);
                 runOnUiThread(() -> { wait.dismiss(); Ui.toast(this, R.string.saved); finish(); });
             } catch (Exception e) {
@@ -161,10 +161,11 @@ public class ProductEditActivity extends AppCompatActivity {
     }
 
     /** Redimensionne (max 1080 px) et compresse en JPEG pour un envoi rapide. */
-    private byte[] compress(Uri uri) throws Exception {
+    static byte[] compress(android.content.Context ctx, Uri uri) throws Exception {
+        android.content.ContentResolver cr = ctx.getContentResolver();
         Bitmap bmp;
         if (Build.VERSION.SDK_INT >= 28) {
-            bmp = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), uri), (dec, info, src) -> {
+            bmp = ImageDecoder.decodeBitmap(ImageDecoder.createSource(cr, uri), (dec, info, src) -> {
                 int w = info.getSize().getWidth(), h = info.getSize().getHeight();
                 float s = Math.min(1f, 1080f / Math.max(w, h));
                 dec.setTargetSize(Math.max(1, Math.round(w * s)), Math.max(1, Math.round(h * s)));
@@ -173,12 +174,12 @@ public class ProductEditActivity extends AppCompatActivity {
         } else {
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
-            try (InputStream in = getContentResolver().openInputStream(uri)) { BitmapFactory.decodeStream(in, null, o); }
+            try (InputStream in = cr.openInputStream(uri)) { BitmapFactory.decodeStream(in, null, o); }
             int sample = 1;
             while (Math.max(o.outWidth, o.outHeight) / (sample * 2) >= 1080) sample *= 2;
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = sample;
-            try (InputStream in = getContentResolver().openInputStream(uri)) { bmp = BitmapFactory.decodeStream(in, null, o2); }
+            try (InputStream in = cr.openInputStream(uri)) { bmp = BitmapFactory.decodeStream(in, null, o2); }
             float s = Math.min(1f, 1080f / Math.max(bmp.getWidth(), bmp.getHeight()));
             if (s < 1f) bmp = Bitmap.createScaledBitmap(bmp, Math.round(bmp.getWidth() * s), Math.round(bmp.getHeight() * s), true);
         }

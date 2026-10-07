@@ -32,6 +32,7 @@ public class HomeFragment extends Fragment {
         swipe.setOnRefreshListener(this::load);
         ((TextView) v.findViewById(R.id.hello)).setText(getString(R.string.hello, Api.username(requireContext())));
         v.findViewById(R.id.addProduct).setOnClickListener(x -> startActivity(new Intent(getContext(), ProductEditActivity.class)));
+        v.findViewById(R.id.bulk).setOnClickListener(x -> startActivity(new Intent(getContext(), BulkActivity.class)));
         v.findViewById(R.id.notify).setOnClickListener(x -> startActivity(new Intent(getContext(), ComposeActivity.class)));
         v.findViewById(R.id.messages).setOnClickListener(x -> ((MainActivity) requireActivity()).goTo(R.id.tab_messages));
         return v;

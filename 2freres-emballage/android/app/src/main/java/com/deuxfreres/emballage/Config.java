@@ -3,7 +3,7 @@ package com.deuxfreres.emballage;
 /** ⚙️ Seul fichier à modifier avant de compiler. */
 public final class Config {
     /** URL du Web App Google Apps Script (se termine par /exec) */
-    public static final String API_URL = "https://script.google.com/macros/s/AKfycbwwFnX10GIN42tBrLokBEaB6dJi_-V60w-sBaX8WaZ6NundpcS0EK45cokWE8RfA8fxYA/exec";
+    public static final String API_URL = "https://flat-violet-af44.yacincianai.workers.dev/api/catalog";
     /** Numéro WhatsApp au format international, sans + ni 0 : ex 213555123456 */
     public static final String WHATSAPP_NUMBER = "213555053539";
     /** Numéro pour le bouton "Appeler" */

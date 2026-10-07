@@ -177,6 +177,10 @@ public class MainActivity extends AppCompatActivity {
         String open = intent == null ? null : intent.getStringExtra(Notifier.EXTRA_OPEN);
         if (open == null) return;
         intent.removeExtra(Notifier.EXTRA_OPEN);
+        if ("support".equals(open)) {
+            startActivity(new Intent(this, SupportActivity.class));
+            return;
+        }
         if ("notifications".equals(open)) {
             openNotifications();
             return;
@@ -291,6 +295,8 @@ public class MainActivity extends AppCompatActivity {
             ApiClient.EXEC.execute(() -> {
                 try { ApiClient.call("POST", "/api/logout", new JSONObject(), token); } catch (Exception ignored) {}
             });
+        } else if (id == R.id.nav_support) {
+            startActivity(new Intent(this, SupportActivity.class));
         } else if (id == R.id.nav_whatsapp) {
             Utils.openWhatsApp(this, getString(R.string.wa_general));
         } else if (id == R.id.nav_call) {

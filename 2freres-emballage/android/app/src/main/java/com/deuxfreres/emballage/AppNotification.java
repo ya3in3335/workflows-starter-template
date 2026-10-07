@@ -12,6 +12,7 @@ public class AppNotification implements Serializable {
     public String body;
     public int productId;
     public String image;
+    public String link;
     public long createdAt;
 
     static AppNotification from(JSONObject o) {
@@ -21,6 +22,7 @@ public class AppNotification implements Serializable {
         n.body = o.optString("body");
         n.productId = o.optInt("productId");
         n.image = o.optString("image");
+        n.link = o.optString("link");
         try {
             n.createdAt = Instant.parse(o.optString("createdAt")).toEpochMilli();
         } catch (Exception e) {

@@ -29,6 +29,10 @@ public class NotificationsActivity extends AppCompatActivity {
         RecyclerView list = findViewById(R.id.list);
         list.setLayoutManager(new LinearLayoutManager(this));
         adapter = new NotificationAdapter(n -> {
+            if ("support".equals(n.link)) {
+                startActivity(new Intent(this, SupportActivity.class));
+                return;
+            }
             Product p = catalog == null ? null : catalog.product(n.productId);
             if (p != null) {
                 startActivity(new Intent(this, DetailActivity.class).putExtra(DetailActivity.EXTRA_PRODUCT, p));

@@ -6,4 +6,4 @@ dependencyResolutionManagement {
     repositories { google(); mavenCentral() }
 }
 rootProject.name = "2FreresEmballage"
-include ':app'
+include ':app', ':admin'

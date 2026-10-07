@@ -31,6 +31,8 @@ import java.util.Random;
 public class SplashActivity extends AppCompatActivity {
 
     private boolean done;
+    private android.media.SoundPool sounds;
+    private final android.os.Handler timer = new android.os.Handler(android.os.Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +123,8 @@ public class SplashActivity extends AppCompatActivity {
 
         addStars(findViewById(R.id.stars), density, all);
 
+        playSounds(letters.getChildCount());
+
         AnimatorSet set = new AnimatorSet();
         set.playTogether(all);
         set.addListener(new AnimatorListenerAdapter() {
@@ -129,6 +133,41 @@ public class SplashActivity extends AppCompatActivity {
         set.start();
 
         findViewById(R.id.root).setOnClickListener(v -> { set.end(); });
+    }
+
+    /** Effets sonores synchronisés avec l'animation (rien si le téléphone est en silencieux/vibreur). */
+    private void playSounds(int letterCount) {
+        android.media.AudioManager am = (android.media.AudioManager) getSystemService(AUDIO_SERVICE);
+        if (am == null || am.getRingerMode() != android.media.AudioManager.RINGER_MODE_NORMAL) return;
+        sounds = new android.media.SoundPool.Builder().setMaxStreams(4)
+                .setAudioAttributes(new android.media.AudioAttributes.Builder()
+                        .setUsage(android.media.AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                        .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION).build())
+                .build();
+        int whoosh = sounds.load(this, R.raw.splash_whoosh, 1);
+        int tick = sounds.load(this, R.raw.splash_tick, 1);
+        int pop = sounds.load(this, R.raw.splash_pop, 1);
+        int chime = sounds.load(this, R.raw.splash_chime, 1);
+        sounds.setOnLoadCompleteListener((pool, id, status) -> {
+            if (id != chime || status != 0) return;            // tout est chargé (ordre de chargement)
+            play(whoosh, 0, 0.55f, 1f);
+            for (int i = 0; i < letterCount; i++) play(tick, 600 + i * 90L, 0.35f, 0.85f + i * 0.08f);
+            play(pop, 1210, 0.6f, 1f);                          // le cadeau touche le sol…
+            play(pop, 1520, 0.35f, 1.15f);                      // …et rebondit
+            play(pop, 1680, 0.18f, 1.3f);
+            play(chime, 1300, 0.45f, 1f);
+        });
+    }
+
+    private void play(int sound, long delayMs, float volume, float rate) {
+        timer.postDelayed(() -> { if (sounds != null) sounds.play(sound, volume, volume, 1, 0, rate); }, delayMs);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        timer.removeCallbacksAndMessages(null);
+        if (sounds != null) { sounds.release(); sounds = null; }
     }
 
     /** Étoiles à plusieurs profondeurs : les plus proches bougent plus (parallaxe). */

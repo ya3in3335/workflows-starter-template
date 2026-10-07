@@ -116,7 +116,8 @@ final class Notifier {
 
         if (fresh.size() <= 3) {
             for (AppNotification n : fresh) {
-                String open = n.productId > 0 ? String.valueOf(n.productId) : "notifications";
+                String open = "support".equals(n.link) ? "support"
+                        : n.productId > 0 ? String.valueOf(n.productId) : "notifications";
                 nm.notify((int) n.id, base(ctx, open, (int) n.id)
                         .setContentTitle(n.title)
                         .setContentText(n.body)

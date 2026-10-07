@@ -9,4 +9,9 @@
         <item name="android:colorBackground">@color/bg</item>
         <item name="android:statusBarColor">@color/brand_dark</item>
     </style>
+    <style name="Theme.App.Splash" parent="Theme.App">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:statusBarColor">#1A1617</item>
+        <item name="android:navigationBarColor">#1A1617</item>
+    </style>
 </resources>

@@ -76,4 +76,9 @@
     <string name="battery_text">Pour recevoir les nouveautés et les promos même quand l\'application est fermée, autorisez-la à fonctionner en arrière-plan.</string>
     <string name="allow">Autoriser</string>
     <string name="later">Plus tard</string>
+    <string name="support">Messages au magasin</string>
+    <string name="support_empty">Posez votre question : le magasin vous répond ici.</string>
+    <string name="support_hint">Votre message…</string>
+    <string name="send">Envoyer</string>
+    <string name="login_to_chat">Connectez-vous pour écrire au magasin</string>
 </resources>

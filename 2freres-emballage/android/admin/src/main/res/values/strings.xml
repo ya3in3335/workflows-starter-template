@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">2F Admin</string>
+    <string name="store">2 Frères Emballage</string>
+    <string name="admin_panel">لوحة التحكم</string>
+    <string name="username">اسم المستخدم</string>
+    <string name="password">كلمة السر</string>
+    <string name="login">دخول</string>
+    <string name="logout">خروج</string>
+    <string name="not_admin">هاذ الحساب ماشي أدمين</string>
+    <string name="bad_credentials">اسم المستخدم ولا كلمة السر غالطين</string>
+    <string name="offline">ما كاينش انترنت، عاود</string>
+    <string name="error">صرا مشكل، عاود</string>
+    <string name="saved">تسجّل ✅</string>
+    <string name="deleted">تمسح 🗑️</string>
+    <string name="sent">تبعث ✅</string>
+    <string name="cancel">إلغاء</string>
+    <string name="save">حفظ</string>
+    <string name="delete">مسح</string>
+    <string name="confirm_delete">متأكد تحب تمسح؟</string>
+    <string name="yes_delete">إيه، امسح</string>
+    <string name="refresh">تحديث</string>
+
+    <string name="tab_home">الرئيسية</string>
+    <string name="tab_products">المنتوجات</string>
+    <string name="tab_messages">الرسائل</string>
+    <string name="tab_notifs">الإشعارات</string>
+    <string name="tab_more">المزيد</string>
+
+    <string name="hello">مرحبا %1$s 👋</string>
+    <string name="stat_products">منتوج</string>
+    <string name="stat_promos">عرض 🔥</string>
+    <string name="stat_users">زبون</string>
+    <string name="stat_reviews">تعليق</string>
+    <string name="stat_rating">التقييم ⭐</string>
+    <string name="stat_unread">رسالة جديدة</string>
+    <string name="quick_add">زيد منتوج</string>
+    <string name="quick_notify">ابعث إشعار</string>
+    <string name="quick_messages">الرسائل</string>
+
+    <string name="search_products">قلّب على منتوج…</string>
+    <string name="no_products">ما كاين حتى منتوج. اضغط + باش تزيد</string>
+    <string name="new_product">منتوج جديد</string>
+    <string name="edit_product">تبديل المنتوج</string>
+    <string name="pick_photo">اختار صورة</string>
+    <string name="change_photo">بدّل الصورة</string>
+    <string name="name">اسم المنتوج</string>
+    <string name="price">السعر (DA)</string>
+    <string name="category">الفئة</string>
+    <string name="description">الوصف</string>
+    <string name="promo">عرض 🔥 (تخفيض)</string>
+    <string name="promo_price">سعر العرض (DA)</string>
+    <string name="old_price_hint">السعر القديم يتشطب في التطبيق</string>
+    <string name="hidden">مخبّي من التطبيق 🙈</string>
+    <string name="notify_customers">ابعث إشعار للزبائن 🔔</string>
+    <string name="uploading">راني نرفع الصورة…</string>
+    <string name="need_name">اكتب اسم المنتوج</string>
+    <string name="need_price">اكتب السعر</string>
+    <string name="bad_promo">سعر العرض لازم يكون أقل من السعر الأصلي</string>
+    <string name="badge_hidden">مخبّي</string>
+    <string name="badge_promo">عرض</string>
+
+    <string name="no_conversations">ما كاين حتى رسالة من الزبائن</string>
+    <string name="you">انت: %1$s</string>
+    <string name="reply_hint">اكتب ردّك…</string>
+    <string name="chat_empty">ما كاين حتى رسالة. ابدا المحادثة 👋</string>
+    <string name="send">إرسال</string>
+
+    <string name="new_notification">إشعار جديد</string>
+    <string name="no_notifications">ما بعثت حتى إشعار</string>
+    <string name="notif_title">العنوان</string>
+    <string name="notif_body">الميساج</string>
+    <string name="target">لمن؟</string>
+    <string name="target_all">لكل الزبائن 👥</string>
+    <string name="target_one">لزبون واحد 👤</string>
+    <string name="choose_user">اختار الزبون</string>
+    <string name="link_product">ربط بمنتوج (اختياري)</string>
+    <string name="no_product">بلا منتوج</string>
+    <string name="for_user">لـ %1$s فقط</string>
+    <string name="for_all">للكل</string>
+    <string name="need_body">اكتب الميساج</string>
+    <string name="need_user">اختار الزبون</string>
+    <string name="send_notification">ابعث الإشعار</string>
+    <string name="notif_delay">يوصل للزبون خلال ~15 دقيقة (ولا ديراكت كي يحلّ التطبيق)</string>
+
+    <string name="more_reviews">التعليقات والتقييمات</string>
+    <string name="more_users">الزبائن</string>
+    <string name="more_password">تبديل كلمة السر</string>
+    <string name="old_password">كلمة السر الحالية</string>
+    <string name="new_password">كلمة السر الجديدة (6 حروف على الأقل)</string>
+    <string name="password_changed">كلمة السر تبدّلت ✅</string>
+
+    <string name="no_reviews">ما كاين حتى تعليق</string>
+    <string name="reply">ردّ المحل</string>
+    <string name="reply_review">الردّ على التعليق</string>
+    <string name="store_reply">↩️ ردّك: %1$s</string>
+
+    <string name="no_users">ما كاين حتى زبون</string>
+    <string name="user_actions">%1$s</string>
+    <string name="action_message">💬 ابعثلو رسالة</string>
+    <string name="action_notify">🔔 ابعثلو إشعار خاص</string>
+    <string name="action_ban">🚫 بلوكي</string>
+    <string name="action_unban">✅ نحّي البلوك</string>
+    <string name="banned">مبلوكي</string>
+    <string name="user_meta">%1$d تعليق · %2$d رسالة</string>
+
+    <string name="channel_name">رسائل وتعليقات الزبائن</string>
+    <string name="alert_messages">💬 %1$d رسالة جديدة من الزبائن</string>
+    <string name="alert_reviews">⭐ تعليق جديد على المنتوجات</string>
+</resources>

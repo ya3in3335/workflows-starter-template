@@ -27,10 +27,12 @@ public class ProductRepository {
 
     private static final ExecutorService EXEC = Executors.newSingleThreadExecutor();
     private final SharedPreferences prefs;
+    private final Context app;
     private final Handler main = new Handler(Looper.getMainLooper());
 
     public ProductRepository(Context ctx) {
-        prefs = ctx.getApplicationContext().getSharedPreferences("catalog_cache", Context.MODE_PRIVATE);
+        app = ctx.getApplicationContext();
+        prefs = app.getSharedPreferences("catalog_cache", Context.MODE_PRIVATE);
     }
 
     public Catalog cached() {
@@ -58,7 +60,7 @@ public class ProductRepository {
 
     /** Appel bloquant (à utiliser hors du thread principal). */
     public Catalog fetch() throws Exception {
-        String json = get(Config.API_URL);
+        String json = get(Config.API_URL, Session.token(app));   // jeton : notifications personnelles
         Catalog c = parse(json);
         prefs.edit().putString("json", json).apply();
         return c;
@@ -76,8 +78,9 @@ public class ProductRepository {
         return c;
     }
 
-    private static String get(String url) throws IOException {
+    private static String get(String url, String token) throws IOException {
         HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
+        if (token != null) c.setRequestProperty("Authorization", "Bearer " + token);
         c.setConnectTimeout(15000);
         c.setReadTimeout(20000);
         c.setInstanceFollowRedirects(true); // Apps Script redirige vers googleusercontent

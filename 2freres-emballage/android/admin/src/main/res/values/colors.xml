@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="dark">#2A2526</color>
+    <color name="dark2">#1A1617</color>
+    <color name="pink">#E0457B</color>
+    <color name="green">#1E5B3A</color>
+    <color name="bg">#F6F3EF</color>
+    <color name="card">#FFFFFF</color>
+    <color name="text">#212121</color>
+    <color name="muted">#757575</color>
+    <color name="danger">#D84315</color>
+    <color name="gold">#F5A623</color>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+ : l'écran système enchaîne sans coupure avec l'animation 3D -->
+    <style name="Theme.App.Splash" parent="Theme.App">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:statusBarColor">#1A1617</item>
+        <item name="android:navigationBarColor">#1A1617</item>
+        <item name="android:windowSplashScreenBackground">#2A2526</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+    </style>
+</resources>

@@ -99,18 +99,18 @@
 
                 <TextView
                     android:id="@+id/greeting"
-                    style="@style/T.Caption"
+                    style="@style/T.Overline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/greeting"
-                    android:textSize="13sp" />
+                    android:text="@string/greeting" />
 
                 <TextView
                     style="@style/T.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
                     android:text="@string/app_name"
-                    android:textSize="20sp" />
+                    android:textSize="22sp" />
             </LinearLayout>
 
             <ImageButton
@@ -122,14 +122,14 @@
                 android:padding="12dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_phone"
-                app:tint="#FFFFFF" />
+                app:tint="@color/gold" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="48dp"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/glass_pill"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -192,10 +192,10 @@
     <LinearLayout
         android:id="@+id/fab"
         android:layout_width="wrap_content"
-        android:layout_height="52dp"
+        android:layout_height="48dp"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="18dp"
-        android:layout_marginBottom="104dp"
+        android:layout_marginBottom="96dp"
         android:background="@drawable/bg_gradient_whatsapp"
         android:clickable="true"
         android:contentDescription="@string/whatsapp"
@@ -210,16 +210,17 @@
             android:layout_height="22dp"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_chat"
-            app:tint="#FFFFFF" />
+            app:tint="@color/on_gold" />
 
         <TextView
             android:id="@+id/fabLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:letterSpacing="0.06"
             android:text="@string/whatsapp"
-            android:textColor="#FFFFFF"
-            android:textSize="15sp"
+            android:textColor="@color/on_gold"
+            android:textSize="14sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -227,10 +228,10 @@
     <FrameLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="66dp"
         android:layout_gravity="bottom"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="14dp"
+        android:layout_marginHorizontal="14dp"
+        android:layout_marginBottom="12dp"
         android:background="@drawable/glass_nav"
         android:padding="6dp">
 

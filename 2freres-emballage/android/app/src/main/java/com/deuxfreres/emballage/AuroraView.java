@@ -15,13 +15,14 @@ import android.view.View;
  */
 public class AuroraView extends View {
 
-    private static final int[] COLORS = {0x80E0457B, 0x66C8A165, 0x553FAE7A, 0x557A4DFF};
+    // Lueurs discrètes : or champagne, bronze, bleu ardoise
+    private static final int[] COLORS = {0x4DC9A96E, 0x337A5A36, 0x2E4F6B78, 0x22C9A96E};
     private static final float[][] ORBITS = {
             // x, y (fraction de l'écran), rayon (fraction de la largeur), amplitude, vitesse, phase
-            {0.10f, 0.10f, 0.95f, 0.10f, 0.00011f, 0f},
-            {0.95f, 0.50f, 0.90f, 0.12f, 0.00009f, 2f},
-            {0.15f, 0.95f, 0.85f, 0.10f, 0.00013f, 4f},
-            {0.85f, 0.05f, 0.60f, 0.08f, 0.00017f, 1f},
+            {0.10f, 0.06f, 1.00f, 0.06f, 0.00006f, 0f},
+            {0.95f, 0.55f, 0.95f, 0.07f, 0.00005f, 2f},
+            {0.20f, 1.00f, 0.90f, 0.06f, 0.00007f, 4f},
+            {0.85f, 0.10f, 0.55f, 0.05f, 0.00008f, 1f},
     };
 
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -54,7 +55,7 @@ public class AuroraView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         int w = getWidth(), h = getHeight();
-        canvas.drawColor(0xFF0E0B10);
+        canvas.drawColor(0xFF0D0C0B);
         if (shaders[0] == null) return;
         long t = SystemClock.uptimeMillis();
         for (int i = 0; i < COLORS.length; i++) {
@@ -67,7 +68,7 @@ public class AuroraView extends View {
             paint.setShader(shaders[i]);
             canvas.drawRect(0, 0, w, h, paint);
         }
-        if (running) postInvalidateDelayed(40);
+        if (running) postInvalidateDelayed(50);
     }
 
     @Override protected void onAttachedToWindow() { super.onAttachedToWindow(); running = true; invalidate(); }

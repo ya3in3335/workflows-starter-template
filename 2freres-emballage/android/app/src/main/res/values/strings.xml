@@ -11,6 +11,8 @@
     <string name="whatsapp">WhatsApp</string>
     <string name="order">Commander via WhatsApp</string>
     <string name="promo">PROMO</string>
+    <string name="store_tagline">Emballage &amp; pâtisserie</string>
+    <string name="catalog">Catalogue</string>
     <string name="ref">Réf #%1$d</string>
     <string name="no_whatsapp">Impossible d\'ouvrir WhatsApp</string>
     <string name="wa_general">Bonjour 2 Frères Emballage, j\'ai une question.</string>
@@ -85,7 +87,7 @@
     <string name="nav_messages">Messages</string>
     <string name="nav_alerts">Alertes</string>
     <string name="nav_profile">Profil</string>
-    <string name="greeting">Bienvenue 👋</string>
+    <string name="greeting">Bienvenue</string>
     <string name="guest">Invité</string>
     <string name="clear">Effacer</string>
     <string name="back">Retour</string>
@@ -100,12 +102,12 @@
     <string name="update_later">Plus tard</string>
     <string name="update_checking">Recherche de mise à jour…</string>
     <string name="update_downloading">Téléchargement… %1$d %%</string>
-    <string name="update_installing">Téléchargé ✓ — confirmez l\'installation</string>
+    <string name="update_installing">Téléchargé — confirmez l\'installation</string>
     <string name="update_failed">Échec du téléchargement. Vérifiez la connexion et réessayez.</string>
-    <string name="update_uptodate">Vous avez déjà la dernière version (%1$s) ✓</string>
+    <string name="update_uptodate">Vous avez déjà la dernière version (%1$s)</string>
     <string name="update_check">Mises à jour</string>
     <string name="update_allow_install">Autorisez « Installer des applis » pour 2 Frères Emballage, puis revenez</string>
-    <string name="update_notif_title">Mise à jour disponible 🚀</string>
+    <string name="update_notif_title">Mise à jour disponible</string>
     <string name="update_notif_text">La version %1$s de 2 Frères Emballage est prête. Touchez pour l\'installer.</string>
     <string name="update_default_notes">Améliorations et corrections.</string>
     <string name="version_label">Version %1$s</string>

@@ -142,8 +142,8 @@ public class MainActivity extends AppCompatActivity {
         Ui.press(call);
         call.setOnClickListener(v -> Utils.call(this));
 
-        swipe.setColorSchemeColors(0xFFFF5C8D, 0xFFF2C879);
-        swipe.setProgressBackgroundColorSchemeColor(0xFF1F1922);
+        swipe.setColorSchemeColors(0xFFD6BC8A);
+        swipe.setProgressBackgroundColorSchemeColor(0xFF1B1917);
         swipe.setOnRefreshListener(() -> { load(); loadRatings(); });
 
         buildBottomBar();
@@ -181,15 +181,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void introAnimation() {
         header.setAlpha(0f);
-        header.setTranslationY(-Ui.dp(this, 30));
+        header.setTranslationY(-Ui.dp(this, 12));
         header.animate().alpha(1f).translationY(0f).setDuration(650).setInterpolator(Ui.SMOOTH).start();
-        bottomBar.setTranslationY(Ui.dp(this, 120));
+        bottomBar.setTranslationY(Ui.dp(this, 90));
         bottomBar.animate().translationY(0f).setStartDelay(220).setDuration(700)
-                .setInterpolator(new android.view.animation.OvershootInterpolator(1.1f)).start();
-        fab.setScaleX(0f);
-        fab.setScaleY(0f);
-        fab.animate().scaleX(1f).scaleY(1f).setStartDelay(520).setDuration(500)
-                .setInterpolator(new android.view.animation.OvershootInterpolator(2f)).start();
+                .setInterpolator(Ui.SMOOTH).start();
+        fab.setAlpha(0f);
+        fab.animate().alpha(1f).setStartDelay(500).setDuration(600)
+                .setInterpolator(Ui.SMOOTH).start();
         Ui.bounce(findViewById(R.id.logo));
     }
 
@@ -214,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
         } else if ((dy < -8 || offset == 0) && barHidden) {
             barHidden = false;
             bottomBar.animate().translationY(0).setDuration(420)
-                    .setInterpolator(new android.view.animation.OvershootInterpolator(1.2f)).start();
+                    .setInterpolator(Ui.SMOOTH).start();
             fab.animate().translationY(0).setDuration(420).setInterpolator(Ui.SMOOTH).start();
             TransitionManager.beginDelayedTransition((ViewGroup) fab);
             fabLabel.setVisibility(View.VISIBLE);
@@ -255,11 +254,8 @@ public class MainActivity extends AppCompatActivity {
         float x = tab.getLeft();
         if (tab.getWidth() == 0) return;   // pas encore mesuré : buildBottomBar s'en chargera
         if (animate && prev >= 0) {
-            navIndicator.animate().translationX(x).setDuration(480)
-                    .setInterpolator(new android.view.animation.OvershootInterpolator(1.4f)).start();
-            // petit étirement « liquide » pendant le déplacement
-            navIndicator.setScaleX(1.18f);
-            navIndicator.animate().scaleX(1f);
+            navIndicator.animate().translationX(x).setDuration(380)
+                    .setInterpolator(Ui.SMOOTH).start();
         } else {
             navIndicator.setTranslationX(x);
         }
@@ -268,10 +264,9 @@ public class MainActivity extends AppCompatActivity {
             boolean on = i == index;
             View icon = t.findViewById(R.id.navIcon);
             TextView label = t.findViewById(R.id.navLabel);
-            icon.setAlpha(on ? 1f : 0.55f);
-            label.setAlpha(on ? 1f : 0.55f);
-            label.setTypeface(null, on ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
-            if (on && animate) Ui.bounce(icon);
+            int color = on ? 0xFFD6BC8A : 0x99F5F1EA;
+            ((ImageView) icon).setImageTintList(android.content.res.ColorStateList.valueOf(color));
+            label.setTextColor(color);
         }
     }
 
@@ -318,8 +313,15 @@ public class MainActivity extends AppCompatActivity {
 
         boolean in = Session.loggedIn(this);
         String user = Session.username(this);
-        ((TextView) v.findViewById(R.id.profAvatar)).setText(in && user != null && !user.isEmpty()
-                ? user.substring(0, 1).toUpperCase(Locale.ROOT) : "👋");
+        TextView avatar = v.findViewById(R.id.profAvatar);
+        if (in && user != null && !user.isEmpty()) {
+            avatar.setText(user.substring(0, 1).toUpperCase(Locale.ROOT));
+        } else {
+            avatar.setText("");
+            avatar.setCompoundDrawablesRelativeWithIntrinsicBounds(0, R.drawable.ic_person, 0, 0);
+            avatar.setCompoundDrawableTintList(android.content.res.ColorStateList.valueOf(0xFFD6BC8A));
+            avatar.setPadding(0, Ui.dp(this, 17), 0, 0);
+        }
         ((TextView) v.findViewById(R.id.profName)).setText(in ? user : getString(R.string.guest));
         ((TextView) v.findViewById(R.id.profHint)).setText(in ? getString(R.string.profile_hint_in)
                 : getString(R.string.profile_hint_guest));
@@ -380,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateGreeting() {
         String u = Session.username(this);
-        greeting.setText(Session.loggedIn(this) && u != null ? getString(R.string.hello_user, u) + " 👋"
+        greeting.setText(Session.loggedIn(this) && u != null ? getString(R.string.hello_user, u)
                 : getString(R.string.greeting));
     }
 
@@ -570,7 +572,6 @@ public class MainActivity extends AppCompatActivity {
                 o.setSelected(sel);
                 o.setTypeface(null, sel ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
             }
-            Ui.bounce(v);
             chipsScroll.smoothScrollTo(Math.max(0, v.getLeft() - Ui.dp(this, 40)), 0);
             selectTab(filter.equals(PROMO) ? TAB_PROMOS : TAB_HOME, true);
             apply(true);

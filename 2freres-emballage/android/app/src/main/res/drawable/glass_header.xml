@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Barre du haut : verre sombre qui apparaît au défilement -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <shape>
-            <gradient android:angle="270" android:startColor="#F5120E14" android:endColor="#D9120E14" />
-            <corners android:bottomLeftRadius="28dp" android:bottomRightRadius="28dp" />
-        </shape>
-    </item>
-    <item>
-        <shape>
-            <stroke android:width="1dp" android:color="#26FFFFFF" />
-            <corners android:bottomLeftRadius="28dp" android:bottomRightRadius="28dp" />
-        </shape>
-    </item>
+    <item><shape><gradient android:angle="270" android:startColor="#F5100F0D" android:endColor="#E0100F0D" /></shape></item>
+    <item android:gravity="bottom" android:height="0.8dp"><shape><solid android:color="#40C9A96E" /></shape></item>
 </layer-list>

@@ -57,8 +57,8 @@
                 android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginTop="-44dp"
+                android:layout_marginHorizontal="14dp"
+                android:layout_marginTop="-36dp"
                 android:background="@drawable/glass_card"
                 android:orientation="vertical"
                 android:padding="20dp">
@@ -69,11 +69,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/bg_badge"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="4dp"
+                    android:letterSpacing="0.15"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp"
                     android:text="@string/promo"
-                    android:textColor="#FFFFFF"
-                    android:textSize="12sp"
+                    android:textColor="@color/gold"
+                    android:textSize="10sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -94,9 +95,9 @@
                         android:id="@+id/price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="serif"
                         android:textColor="@color/gold"
-                        android:textSize="28sp"
-                        android:textStyle="bold" />
+                        android:textSize="28sp" />
 
                     <TextView
                         android:id="@+id/oldPrice"
@@ -124,12 +125,11 @@
 
                 <TextView
                     android:id="@+id/descTitle"
-                    style="@style/T.Title"
+                    style="@style/T.Overline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="22dp"
-                    android:text="@string/description"
-                    android:textSize="16sp" />
+                    android:text="@string/description" />
 
                 <TextView
                     android:id="@+id/description"
@@ -144,14 +144,14 @@
                 android:id="@+id/reviewsCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="12dp"
+                android:layout_marginHorizontal="14dp"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/glass_card"
                 android:orientation="vertical"
                 android:padding="20dp">
 
                 <TextView
-                    style="@style/T.Title"
+                    style="@style/T.Overline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/reviews" />
@@ -168,9 +168,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="–"
-                        android:textColor="#FFFFFF"
-                        android:textSize="40sp"
-                        android:textStyle="bold" />
+                        android:fontFamily="serif"
+                        android:textColor="#F5F1EA"
+                        android:textSize="40sp" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -264,7 +264,7 @@
             android:padding="12dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_back"
-            app:tint="#FFFFFF" />
+            app:tint="@color/gold" />
 
         <TextView
             android:id="@+id/title"
@@ -287,7 +287,7 @@
             android:padding="12dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_share"
-            app:tint="#FFFFFF" />
+            app:tint="@color/gold" />
     </LinearLayout>
 
     <!-- ===== Barre de commande ===== -->
@@ -310,6 +310,6 @@
             android:text="@string/order"
             app:icon="@drawable/ic_chat"
             app:iconGravity="textStart"
-            app:iconTint="#FFFFFF" />
+            app:iconTint="@color/on_gold" />
     </FrameLayout>
 </FrameLayout>

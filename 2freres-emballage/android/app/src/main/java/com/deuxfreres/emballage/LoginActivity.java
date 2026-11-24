@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
         error.setVisibility(View.VISIBLE);
         // petite secousse « non »
         error.setTranslationX(0);
-        android.animation.ObjectAnimator.ofFloat(error, "translationX", 0, 18, -14, 10, -6, 0)
+        android.animation.ObjectAnimator.ofFloat(error, "translationX", 0, 8, -6, 4, -2, 0)
                 .setDuration(420).start();
     }
 }

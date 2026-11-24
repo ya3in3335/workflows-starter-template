@@ -1,4 +1,4 @@
-✨ Nouveau design en verre, plus moderne
-🧭 Barre de navigation en bas : Accueil, Promos, Messages, Alertes, Profil
-🎬 Animations et transitions fluides entre les écrans
-🚀 Les prochaines mises à jour s'installent directement depuis l'application
+• Nouvelle interface, plus élégante, avec effets de verre
+• Barre de navigation en bas : Accueil, Promos, Messages, Alertes, Profil
+• Transitions fluides entre les écrans
+• Les prochaines mises à jour s'installent directement depuis l'application

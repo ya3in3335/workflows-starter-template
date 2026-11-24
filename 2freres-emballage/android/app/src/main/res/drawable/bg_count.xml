@@ -1,5 +1,5 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <gradient android:angle="0" android:startColor="#FF4D8D" android:endColor="#FF8A4D" />
+    <solid android:color="#C9A96E" />
     <corners android:radius="100dp" />
-    <stroke android:width="1.5dp" android:color="#140F16" />
+    <stroke android:width="1.5dp" android:color="#141210" />
 </shape>

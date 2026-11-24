@@ -118,7 +118,7 @@ public class DetailActivity extends AppCompatActivity {
                 (v, x, y, ox, oy) -> {
                     image.setTranslationY(y * 0.45f);
                     heroBg.setTranslationY(y * 0.45f);
-                    float k = 1f + Math.min(0.12f, y / 4000f);
+                    float k = 1f + Math.min(0.06f, y / 6000f);
                     image.setScaleX(k);
                     image.setScaleY(k);
                     float f = Math.min(1f, y / (float) Math.max(1, hero.getHeight() - topBar.getHeight() * 2));
@@ -130,9 +130,9 @@ public class DetailActivity extends AppCompatActivity {
         // Entrée : les cartes montent en cascade, la barre de commande glisse depuis le bas
         Ui.rise(findViewById(R.id.content), 180);
         Ui.rise(findViewById(R.id.reviewsCard), 300);
-        orderBar.setTranslationY(Ui.dp(this, 140));
+        orderBar.setTranslationY(Ui.dp(this, 100));
         orderBar.animate().translationY(0).setStartDelay(350).setDuration(650)
-                .setInterpolator(new android.view.animation.OvershootInterpolator(1.1f)).start();
+                .setInterpolator(Ui.SMOOTH).start();
 
         ((TextView) findViewById(R.id.name)).setText(p.name);
         ((TextView) findViewById(R.id.price)).setText(Utils.price(p.price));

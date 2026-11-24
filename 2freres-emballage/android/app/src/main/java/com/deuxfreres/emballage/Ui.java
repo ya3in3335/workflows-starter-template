@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
 import android.view.animation.PathInterpolator;
 
 import androidx.core.graphics.Insets;
@@ -72,25 +71,25 @@ final class Ui {
         for (int i = 0; i < parent.getChildCount(); i++) {
             View c = parent.getChildAt(i);
             if (c.getVisibility() != View.VISIBLE) continue;
-            rise(c, startDelay + i * 55L);
+            rise(c, startDelay + i * 45L);
         }
     }
 
     static void rise(View c, long delay) {
         c.setAlpha(0f);
-        c.setTranslationY(dp(c.getContext(), 26));
+        c.setTranslationY(dp(c.getContext(), 14));
         c.animate().alpha(1f).translationY(0f).setStartDelay(delay)
-                .setDuration(520).setInterpolator(SMOOTH).start();
+                .setDuration(620).setInterpolator(SMOOTH).start();
     }
 
-    /** Petit rebond (icône sélectionnée, badge…). */
+    /** Apparition douce (léger zoom + fondu) : sobre, sans rebond. */
     static void bounce(View v) {
         // animateur séparé : ne coupe pas un fondu/montée en cours sur la même vue
         android.animation.ObjectAnimator a = android.animation.ObjectAnimator.ofPropertyValuesHolder(v,
-                android.animation.PropertyValuesHolder.ofFloat(View.SCALE_X, 0.7f, 1f),
-                android.animation.PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.7f, 1f));
-        a.setDuration(450);
-        a.setInterpolator(new OvershootInterpolator(3f));
+                android.animation.PropertyValuesHolder.ofFloat(View.SCALE_X, 0.9f, 1f),
+                android.animation.PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.9f, 1f));
+        a.setDuration(520);
+        a.setInterpolator(SMOOTH);
         a.start();
     }
 }

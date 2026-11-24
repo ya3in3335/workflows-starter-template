@@ -187,6 +187,7 @@ final class Updater {
                 status.setText(a.getString(R.string.update_downloading, pct));
             }, file -> {
                 icon.animate().cancel();
+                icon.setAlpha(1f);
                 if (file == null) {
                     status.setText(R.string.update_failed);
                     now.setEnabled(true);
@@ -210,8 +211,8 @@ final class Updater {
     }
 
     private static void pulse(View v) {
-        v.animate().scaleX(1.12f).scaleY(1.12f).setDuration(600).withEndAction(() ->
-                v.animate().scaleX(1f).scaleY(1f).setDuration(600).withEndAction(() -> {
+        v.animate().alpha(0.55f).setDuration(700).withEndAction(() ->
+                v.animate().alpha(1f).setDuration(700).withEndAction(() -> {
                     if (v.isAttachedToWindow() && v.getTag() == null) pulse(v);
                 }).start()).start();
     }

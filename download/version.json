@@ -1,8 +1,8 @@
 {
   "versionCode": 9,
   "versionName": "3.0",
-  "notes": "✨ Nouveau design en verre, plus moderne\n🧭 Barre de navigation en bas : Accueil, Promos, Messages, Alertes, Profil\n🎬 Animations et transitions fluides entre les écrans\n🚀 Les prochaines mises à jour s'installent directement depuis l'application",
+  "notes": "• Nouvelle interface, plus élégante, avec effets de verre\n• Barre de navigation en bas : Accueil, Promos, Messages, Alertes, Profil\n• Transitions fluides entre les écrans\n• Les prochaines mises à jour s'installent directement depuis l'application",
   "apk": "https://raw.githubusercontent.com/ya3in3335/workflows-starter-template/main/download/2FreresEmballage.apk",
-  "size": 6659310,
+  "size": 6660515,
   "mandatory": false
 }

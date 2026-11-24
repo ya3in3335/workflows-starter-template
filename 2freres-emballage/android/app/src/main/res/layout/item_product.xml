@@ -8,7 +8,7 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="@drawable/ripple_tile"
-    android:padding="7dp"
+    android:padding="6dp"
     android:stateListAnimator="@animator/press_scale">
 
     <LinearLayout
@@ -18,7 +18,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="158dp">
+            android:layout_height="168dp">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/image"
@@ -34,11 +34,12 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:background="@drawable/bg_badge"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="3dp"
+                android:letterSpacing="0.15"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp"
                 android:text="@string/promo"
-                android:textColor="#FFFFFF"
-                android:textSize="10sp"
+                android:textColor="@color/gold"
+                android:textSize="9sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -64,9 +65,9 @@
             android:minLines="2"
             android:paddingHorizontal="6dp"
             android:paddingTop="10dp"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:fontFamily="serif"
+            android:textColor="#F5F1EA"
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -87,8 +88,9 @@
                     android:id="@+id/price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:letterSpacing="0.02"
                     android:textColor="@color/gold"
-                    android:textSize="15sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -100,13 +102,11 @@
             </LinearLayout>
 
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/bg_send"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:importantForAccessibility="no"
-                android:padding="6dp"
-                android:src="@drawable/ic_chevron"
-                app:tint="#FFFFFF" />
+                android:src="@drawable/ic_arrow_right"
+                app:tint="@color/gold" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

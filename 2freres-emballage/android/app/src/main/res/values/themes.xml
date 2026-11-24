@@ -2,8 +2,8 @@
 <resources>
     <style name="Theme.App" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/brand</item>
-        <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="colorPrimaryContainer">#3A1F2A</item>
+                <item name="colorPrimaryContainer">#3A3020</item>
+        <item name="colorOnPrimary">@color/on_gold</item>
         <item name="colorSecondary">@color/gold</item>
         <item name="colorSecondaryContainer">#2E2618</item>
         <item name="colorSurface">#1A151C</item>
@@ -67,14 +67,22 @@
     <style name="T" parent="">
         <item name="android:textColor">@color/text_primary</item>
     </style>
+    <!-- Titres en serif : touche classique -->
     <style name="T.Display">
+        <item name="android:fontFamily">serif</item>
         <item name="android:textSize">28sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:letterSpacing">0.005</item>
     </style>
     <style name="T.Title">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textSize">19sp</item>
+    </style>
+    <!-- Petites capitales espacées (sur-titres, onglets) -->
+    <style name="T.Overline">
+        <item name="android:textSize">11sp</item>
+        <item name="android:letterSpacing">0.18</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/gold</item>
     </style>
     <style name="T.Body">
         <item name="android:textSize">15sp</item>
@@ -88,21 +96,23 @@
 
     <!-- Bouton dégradé principal -->
     <style name="GlassButton" parent="Widget.Material3.Button">
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/on_gold</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:letterSpacing">0.06</item>
         <item name="android:textStyle">bold</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
-        <item name="cornerRadius">18dp</item>
+        <item name="iconTint">@color/on_gold</item>
+        <item name="cornerRadius">12dp</item>
         <item name="backgroundTint">@null</item>
         <item name="android:background">@drawable/bg_gradient_primary</item>
         <item name="android:stateListAnimator">@animator/press_scale</item>
     </style>
     <style name="GlassButton.Outline" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColor">@color/text_primary</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
-        <item name="cornerRadius">18dp</item>
+        <item name="cornerRadius">12dp</item>
         <item name="strokeColor">@color/glass_stroke</item>
         <item name="backgroundTint">#14FFFFFF</item>
         <item name="android:stateListAnimator">@animator/press_scale</item>
@@ -113,28 +123,33 @@
 
     <style name="GlassToolbar">
         <item name="android:background">@android:color/transparent</item>
+        <item name="titleTextAppearance">@style/T.ToolbarTitle</item>
         <item name="titleTextColor">#FFFFFF</item>
         <item name="subtitleTextColor">@color/text_secondary</item>
         <item name="navigationIconTint">#FFFFFF</item>
     </style>
+    <style name="T.ToolbarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textSize">20sp</item>
+    </style>
     <style name="Shape.Image" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">17dp</item>
+        <item name="cornerSize">10dp</item>
     </style>
     <style name="Shape.Hero" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeBottomLeft">32dp</item>
-        <item name="cornerSizeBottomRight">32dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeTopLeft">0dp</item>
         <item name="cornerSizeTopRight">0dp</item>
     </style>
     <style name="GlassField" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundColor">#14FFFFFF</item>
         <item name="boxStrokeColor">@color/brand</item>
-        <item name="boxCornerRadiusTopStart">18dp</item>
-        <item name="boxCornerRadiusTopEnd">18dp</item>
-        <item name="boxCornerRadiusBottomStart">18dp</item>
-        <item name="boxCornerRadiusBottomEnd">18dp</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
         <item name="hintTextColor">@color/brand</item>
         <item name="android:textColorHint">@color/text_muted</item>
         <item name="startIconTint">@color/text_secondary</item>

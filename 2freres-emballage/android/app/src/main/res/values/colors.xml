@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Identité : charbon + rose (splash) + kraft doré -->
-    <color name="brand">#FF5C8D</color>
-    <color name="brand_dark">#0E0B10</color>
+    <!-- Classique : charbon profond + or champagne, verre fumé -->
+    <color name="brand">#C9A96E</color>
+    <color name="brand_dark">#0D0C0B</color>
     <color name="kraft">#C8A165</color>
-    <color name="kraft_light">#F2C879</color>
-    <color name="promo">#FF4D6D</color>
-    <color name="bg">#0E0B10</color>
-    <color name="bg_mid">#17121A</color>
-    <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#B3FFFFFF</color>
-    <color name="text_muted">#73FFFFFF</color>
+    <color name="kraft_light">#E6D3AE</color>
+    <color name="promo">#B5485A</color>
+    <color name="bg">#0D0C0B</color>
+    <color name="bg_mid">#161412</color>
+    <color name="text_primary">#F5F1EA</color>
+    <color name="text_secondary">#ADF5F1EA</color>
+    <color name="text_muted">#70F5F1EA</color>
+    <color name="on_gold">#17130D</color>
     <color name="whatsapp">#25D366</color>
     <color name="card_dark">#2A2526</color>
-    <color name="card_pink">#E0457B</color>
-    <color name="gold">#F2C879</color>
-    <color name="mint">#5EE6A8</color>
-    <color name="glass_top">#26FFFFFF</color>
-    <color name="glass_bottom">#0AFFFFFF</color>
-    <color name="glass_stroke">#2EFFFFFF</color>
+    <color name="card_pink">#C9A96E</color>
+    <color name="gold">#D6BC8A</color>
+    <color name="gold_line">#59C9A96E</color>
+    <color name="mint">#7FB89A</color>
+    <color name="glass_top">#1FFFFFFF</color>
+    <color name="glass_bottom">#08FFFFFF</color>
+    <color name="glass_stroke">#26FFFFFF</color>
     <color name="glass_strong">#B3141017</color>
-    <color name="star">#FFC94D</color>
+    <color name="star">#D6BC8A</color>
 </resources>

@@ -56,7 +56,7 @@
     <string name="create_account">Créer un compte</string>
     <string name="no_account">Pas de compte ? Créer un compte</string>
     <string name="have_account">Déjà un compte ? Se connecter</string>
-    <string name="login_subtitle">Connectez-vous pour noter les produits et laisser des commentaires</string>
+    <string name="login_subtitle">Connectez-vous pour noter les produits, laisser des avis et écrire au magasin</string>
     <string name="username">Nom d\'utilisateur</string>
     <string name="password">Mot de passe</string>
     <string name="account">Mon compte</string>
@@ -111,4 +111,26 @@
     <string name="update_notif_text">La version %1$s de 2 Frères Emballage est prête. Touchez pour l\'installer.</string>
     <string name="update_default_notes">Améliorations et corrections.</string>
     <string name="version_label">Version %1$s</string>
+    <string name="continue_google">Continuer avec Google</string>
+    <string name="or_email">ou par e-mail</string>
+    <string name="email">Adresse e-mail</string>
+    <string name="display_name">Nom affiché</string>
+    <string name="display_name_help">Visible sous vos avis</string>
+    <string name="forgot_password">Mot de passe oublié ?</string>
+    <string name="resend_verification">Renvoyer l\'e-mail de confirmation</string>
+    <string name="legacy_account">Ancien compte avec nom d\'utilisateur ?</string>
+    <string name="back_to_email">← Revenir à la connexion par e-mail</string>
+    <string name="legacy_title">Ancien compte</string>
+    <string name="err_email">Adresse e-mail invalide</string>
+    <string name="err_password_short">Mot de passe : au moins 8 caractères</string>
+    <string name="err_name">Nom affiché : 3 caractères au moins</string>
+    <string name="err_email_used">Cette adresse est déjà utilisée. Connectez-vous ou utilisez « Continuer avec Google ».</string>
+    <string name="err_weak_password">Mot de passe trop faible : mélangez lettres et chiffres (8 caractères minimum)</string>
+    <string name="err_too_many">Trop de tentatives. Réessayez dans quelques minutes.</string>
+    <string name="err_not_verified">Confirmez d\'abord votre adresse : ouvrez le lien reçu par e-mail.</string>
+    <string name="err_google">Connexion Google impossible. Réessayez.</string>
+    <string name="err_google_none">Aucun compte Google sur ce téléphone. Ajoutez-en un dans les réglages.</string>
+    <string name="verify_sent">Un e-mail de confirmation a été envoyé à %1$s. Ouvrez le lien (vérifiez aussi les spams), puis connectez-vous ici.</string>
+    <string name="reset_sent">Si un compte existe pour %1$s, un e-mail de réinitialisation vient d\'être envoyé.</string>
+    <string name="reset_need_email">Saisissez votre adresse e-mail ci-dessus, puis touchez « Mot de passe oublié ? ».</string>
 </resources>

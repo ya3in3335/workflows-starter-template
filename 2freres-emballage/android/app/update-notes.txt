@@ -1,4 +1,4 @@
 • Nouvelle interface, plus élégante, avec effets de verre
+• Connexion sécurisée : « Continuer avec Google » ou e-mail confirmé
 • Barre de navigation en bas : Accueil, Promos, Messages, Alertes, Profil
-• Transitions fluides entre les écrans
 • Les prochaines mises à jour s'installent directement depuis l'application

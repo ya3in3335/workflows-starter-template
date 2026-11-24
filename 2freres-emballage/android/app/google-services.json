@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "956106850630",
+    "project_id": "sample-firebase-ai-app-2c019",
+    "storage_bucket": "sample-firebase-ai-app-2c019.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956106850630:android:0dfbba5519eb1b73ec6547",
+        "android_client_info": {
+          "package_name": "com.deuxfreres.emballage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "956106850630-rj5msgm16ddh7fbee24sajqpd3e3g5l2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.deuxfreres.emballage",
+            "certificate_hash": "79fd18e88e242c8b11b1e4094cf31f993fab696c"
+          }
+        },
+        {
+          "client_id": "956106850630-19isn3en66ig2h9sickrvsvno3q207o5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUZYoWH8n-9yxIxrZaMOQgMkJDZuo2vkM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "956106850630-19isn3en66ig2h9sickrvsvno3q207o5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

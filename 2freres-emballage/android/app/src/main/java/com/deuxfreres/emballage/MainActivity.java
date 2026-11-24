@@ -373,6 +373,14 @@ public class MainActivity extends AppCompatActivity {
     private void logout() {
         String token = Session.token(this);
         Session.clear(this);
+        com.google.firebase.auth.FirebaseAuth.getInstance().signOut();
+        androidx.credentials.CredentialManager.create(this).clearCredentialStateAsync(
+                new androidx.credentials.ClearCredentialStateRequest(), null,
+                androidx.core.content.ContextCompat.getMainExecutor(this),
+                new androidx.credentials.CredentialManagerCallback<Void, androidx.credentials.exceptions.ClearCredentialException>() {
+                    @Override public void onResult(Void v) {}
+                    @Override public void onError(@androidx.annotation.NonNull androidx.credentials.exceptions.ClearCredentialException e) {}
+                });
         updateGreeting();
         Snackbar.make(swipe, R.string.logged_out, Snackbar.LENGTH_SHORT).show();
         ApiClient.EXEC.execute(() -> {

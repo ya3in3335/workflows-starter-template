@@ -99,3 +99,8 @@ https://github.com/ya3in3335/workflows-starter-template/raw/main/download/2Frere
 > 🔑 المفتاح `android/keystore/2freres.jks` لازم يبقى هو هو: كل النسخ تتوقّع بيه، وإلا Android يرفض التحديث. ما تمسحوش.
 >
 > ⚠️ النسخ القديمة (2.1 وقبل) كانت موقّعة بمفتاح آخر، دونك الزبائن لي عندهم نسخة قديمة لازم يمسحوها **مرة وحدة** وينصبو v3 من الرابط. من بعد، كل التحديثات تجي من داخل التطبيق.
+
+## 🔐 الدخول الآمن (Firebase)
+- التطبيق: «Continuer avec Google»، ولا إيميل + كلمة سر (لازم يأكد الإيميل قبل ما يدخل)، و «Mot de passe oublié». الحسابات القديمة (يوزر) تخدم من «Ancien compte avec nom d'utilisateur ?».
+- Firebase: المشروع `sample-firebase-ai-app-2c019`، تطبيق Android `com.deuxfreres.emballage` مع SHA-1/SHA-256 تاع `keystore/2freres.jks`. الملف `android/app/google-services.json`.
+- الـ Worker: `/api/firebase-login` يتحقق من توقيع الـ ID token (مفاتيح Google)، المشروع، الصلاحية، والإيميل المأكد، ومن بعد يعطي نفس الـ session تاع التطبيق. الداتاباز: `migrations_003_firebase.sql` (تطبّقت).

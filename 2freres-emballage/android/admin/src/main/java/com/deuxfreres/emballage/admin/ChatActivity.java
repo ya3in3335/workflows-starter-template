@@ -36,7 +36,7 @@ public class ChatActivity extends AppCompatActivity {
     private EditText input;
     private View send;
     private final Runnable poll = new Runnable() {
-        @Override public void run() { load(); main.postDelayed(this, 7000); }
+        @Override public void run() { load(); main.postDelayed(this, 20000); }
     };
 
     @Override
@@ -58,8 +58,19 @@ public class ChatActivity extends AppCompatActivity {
         send.setOnClickListener(v -> reply());
     }
 
-    @Override protected void onResume() { super.onResume(); main.post(poll); }
-    @Override protected void onPause() { super.onPause(); main.removeCallbacks(poll); }
+    /** Message du client reçu par push : affiché tout de suite. */
+    private final AdminPush.Listener pushListener = d -> {
+        if ("support".equals(d.get("type")) && String.valueOf(userId).equals(d.get("userId"))) load();
+    };
+
+    @Override protected void onResume() {
+        super.onResume();
+        main.post(poll);
+        AdminPush.LISTENERS.add(pushListener);
+        // on lit la discussion : la notification de ce client n'est plus utile
+        androidx.core.app.NotificationManagerCompat.from(this).cancel(10_000 + userId);
+    }
+    @Override protected void onPause() { super.onPause(); main.removeCallbacks(poll); AdminPush.LISTENERS.remove(pushListener); }
 
     private void load() {
         Api.async(this, "GET", "/api/admin/support/" + userId, null, r -> show(r.optJSONArray("messages")), null);

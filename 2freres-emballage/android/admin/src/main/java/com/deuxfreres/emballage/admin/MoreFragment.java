@@ -38,6 +38,7 @@ public class MoreFragment extends ListFragment {
             case "reviews": startActivity(new Intent(getContext(), ReviewsActivity.class)); break;
             case "users": startActivity(new Intent(getContext(), UsersActivity.class)); break;
             case "logout":
+                AdminPush.unregister();
                 Api.clear(requireContext());
                 // oublie le compte Google choisi, pour pouvoir en prendre un autre
                 androidx.credentials.CredentialManager.create(requireContext()).clearCredentialStateAsync(

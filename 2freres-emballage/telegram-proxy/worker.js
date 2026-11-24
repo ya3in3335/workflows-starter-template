@@ -11,6 +11,7 @@
  * 3) Modération des avis depuis Telegram (répondre / supprimer / bloquer).
  *
  * 4) Connexion Firebase (/api/firebase-login) : e-mail vérifié ou Google ; voir migrations_003_firebase.sql.
+ * 6) Notifications push instantanées (FCM) : secret FCM_SERVICE_ACCOUNT, table push_tokens (migrations_004_push.sql).
  * 5) Connexion admin (/api/admin/google-login) : Google uniquement, e-mail autorisé dans users.email
  *    (role = 'admin'). Les admins ne peuvent plus se connecter par mot de passe.
  *
@@ -154,6 +155,7 @@ async function api(request, env, ctx, url) {
   if (path === '/api/login' && method === 'POST') return login(env, body);
   if (path === '/api/firebase-login' && method === 'POST') return firebaseLogin(env, body);
   if (path === '/api/admin/google-login' && method === 'POST') return adminGoogleLogin(env, body);
+  if (path === '/api/push/register' && method === 'POST') return pushRegister(env, body, await auth(request, env));
   if (path === '/api/ratings' && method === 'GET') return ratings(env);
   if (path === '/api/catalog' && method === 'GET') return catalog(env, url, await auth(request, env));
   if (path === '/api/reviews' && method === 'GET') {
@@ -425,6 +427,8 @@ async function saveReview(env, ctx, user, body) {
   }
   const stars = '⭐'.repeat(Math.round(rating));
   const name = String(body.productName || ('#' + productId)).slice(0, 100);
+  ctx.waitUntil(pushToAdmins(env, { type: 'review', id: String(id), productId: String(productId),
+    title: stars + ' ' + user.username + ' — ' + name, body: text.slice(0, 300) }).catch(() => {}));
   ctx.waitUntil(notifyAdmins(env,
     (prev ? '✏️ تعليق تبدّل' : '💬 تعليق جديد') + ' على: ' + name + '\n' + stars + ' — 👤 ' + user.username +
     (text ? '\n\n' + text : ''),
@@ -527,14 +531,107 @@ function imageRef(v) {
   return m ? m[1] : s;
 }
 
+/* ===================== Push (Firebase Cloud Messaging) =====================
+ * Secret FCM_SERVICE_ACCOUNT = contenu JSON de la clé « compte de service » Firebase.
+ * Sans ce secret, rien n'est envoyé (les applications gardent leur vérification périodique). */
+const PUBLIC_ORIGIN = 'https://flat-violet-af44.yacincianai.workers.dev';
+let fcmAuth = { token: null, until: 0 };
+
+function pemToDer(pem) {
+  const b = atob(String(pem).replace(/-----[^-]+-----/g, '').replace(/\s+/g, ''));
+  return Uint8Array.from(b, c => c.charCodeAt(0));
+}
+const b64urlStr = s => btoa(s).replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
+const b64urlBuf = buf => b64urlStr(String.fromCharCode(...new Uint8Array(buf)));
+
+/** Jeton OAuth Google à partir du compte de service (JWT signé RS256), mis en cache ~55 min. */
+async function googleAccessToken(env, scope) {
+  const sa = JSON.parse(env.FCM_SERVICE_ACCOUNT);
+  const now = Math.floor(Date.now() / 1000);
+  const head = b64urlStr(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+  const claim = b64urlStr(JSON.stringify({ iss: sa.client_email, scope, aud: 'https://oauth2.googleapis.com/token', iat: now, exp: now + 3600 }));
+  const key = await crypto.subtle.importKey('pkcs8', pemToDer(sa.private_key), { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key, new TextEncoder().encode(head + '.' + claim));
+  const r = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=' + head + '.' + claim + '.' + b64urlBuf(sig)
+  });
+  const j = await r.json();
+  if (!j.access_token) throw new Error('oauth: ' + JSON.stringify(j).slice(0, 200));
+  return { token: j.access_token, project: sa.project_id, expiresIn: j.expires_in || 3600 };
+}
+
+async function fcmSend(env, target) {
+  if (!env.FCM_SERVICE_ACCOUNT) return { skipped: true };
+  if (!fcmAuth.token || Date.now() > fcmAuth.until) {
+    const t = await googleAccessToken(env, 'https://www.googleapis.com/auth/firebase.messaging');
+    fcmAuth = { token: t.token, project: t.project, until: Date.now() + (t.expiresIn - 300) * 1000 };
+  }
+  const r = await fetch('https://fcm.googleapis.com/v1/projects/' + fcmAuth.project + '/messages:send', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + fcmAuth.token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: { ...target, android: { priority: 'high' } } })
+  });
+  if (r.ok) return { ok: true };
+  const e = await r.json().catch(() => ({}));
+  const code = JSON.stringify(e);
+  return { ok: false, gone: r.status === 404 || /UNREGISTERED|INVALID_ARGUMENT.*token/i.test(code), status: r.status };
+}
+
+/** Données uniquement (chaînes) : l'application affiche elle-même la notification et ouvre le bon écran. */
+function fcmData(data) {
+  const out = {};
+  for (const [k, v] of Object.entries(data)) if (v !== undefined && v !== null) out[k] = String(v);
+  return out;
+}
+
+async function pushToTokens(env, rows, data) {
+  await Promise.all(rows.map(async ({ token }) => {
+    const r = await fcmSend(env, { token, data: fcmData(data) }).catch(() => ({}));
+    if (r.gone) await env.DB.prepare('DELETE FROM push_tokens WHERE token = ?').bind(token).run();
+  }));
+}
+
+async function pushToTopic(env, topic, data) { return fcmSend(env, { topic, data: fcmData(data) }); }
+
+async function pushToUser(env, userId, data) {
+  const { results } = await env.DB.prepare("SELECT token FROM push_tokens WHERE user_id = ? AND app = 'client'").bind(userId).all();
+  return pushToTokens(env, results, data);
+}
+
+async function pushToAdmins(env, data) {
+  const { results } = await env.DB.prepare(
+    "SELECT t.token FROM push_tokens t JOIN users u ON u.id = t.user_id WHERE t.app = 'admin' AND u.role = 'admin'").all();
+  return pushToTokens(env, results, data);
+}
+
+/** L'application envoie son jeton FCM (avec ou sans compte connecté). */
+async function pushRegister(env, body, user) {
+  const token = String(body.token || '');
+  if (!/^[\w:\-.]{20,4096}$/.test(token)) return err('bad_token', 400);
+  const app = body.app === 'admin' && user && user.role === 'admin' ? 'admin' : 'client';
+  await env.DB.prepare(
+    'INSERT INTO push_tokens (token, user_id, app, updated_at) VALUES (?, ?, ?, ?) ' +
+    'ON CONFLICT(token) DO UPDATE SET user_id = excluded.user_id, app = excluded.app, updated_at = excluded.updated_at'
+  ).bind(token, user ? user.id : null, app, Date.now()).run();
+  return json({ ok: true, app, push: !!env.FCM_SERVICE_ACCOUNT });
+}
+
 /* ===================== Notifications & support ===================== */
 
 async function createNotif(env, n) {
+  const title = String(n.title || '').slice(0, 120), body = String(n.body || '').slice(0, 1000);
+  const img = imageRef(n.image), link = String(n.link || ''), productId = Number(n.productId) || 0;
+  const userId = n.userId ? Number(n.userId) : null;
   const r = await env.DB.prepare(
     'INSERT INTO notifications (title, body, product_id, image, link, user_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
-  ).bind(String(n.title || '').slice(0, 120), String(n.body || '').slice(0, 1000), Number(n.productId) || 0,
-    imageRef(n.image), String(n.link || ''), n.userId ? Number(n.userId) : null, Date.now()).run();
-  return r.meta.last_row_id;
+  ).bind(title, body, productId, img, link, userId, Date.now()).run();
+  const id = r.meta.last_row_id;
+  // Push instantané (FCM) : à tout le monde (sujet « all ») ou au seul client concerné
+  const data = { type: 'notif', id: String(id), title, body, productId: String(productId), link,
+    image: img ? (/^https?:/.test(img) ? img : PUBLIC_ORIGIN + '/img/' + img) : '' };
+  await (userId ? pushToUser(env, userId, data) : pushToTopic(env, 'all', data)).catch(() => {});
+  return id;
 }
 
 async function supportThread(env, userId, side) {
@@ -553,6 +650,8 @@ async function supportSend(env, ctx, user, body) {
   if (!text) return err('empty', 400);
   await env.DB.prepare('INSERT INTO messages (user_id, from_admin, text, created_at, read_by_user) VALUES (?, 0, ?, ?, 1)')
     .bind(user.id, text, Date.now()).run();
+  ctx.waitUntil(pushToAdmins(env, { type: 'support', userId: String(user.id), username: user.username,
+    title: '💬 ' + user.username, body: text.slice(0, 300) }).catch(() => {}));
   return supportThread(env, user.id, 'user');
 }
 

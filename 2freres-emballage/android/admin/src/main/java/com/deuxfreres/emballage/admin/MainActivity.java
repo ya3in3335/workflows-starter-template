@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
             bottom.setSelectedItemId(getIntent().getIntExtra(EXTRA_TAB, R.id.tab_home));
         }
         Watcher.schedule(this);
+        AdminPush.register(this);
         if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this,
                 Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             askNotif.launch(Manifest.permission.POST_NOTIFICATIONS);

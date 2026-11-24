@@ -39,7 +39,7 @@ public class SupportActivity extends AppCompatActivity {
     private EditText input;
     private View send;
     private final Runnable poll = new Runnable() {
-        @Override public void run() { load(); main.postDelayed(this, 8000); }
+        @Override public void run() { load(); main.postDelayed(this, 20000); }   // filet de sécurité : le push arrive avant
     };
 
     private final ActivityResultLauncher<Intent> login =
@@ -74,8 +74,11 @@ public class SupportActivity extends AppCompatActivity {
         }
     }
 
-    @Override protected void onResume() { super.onResume(); main.post(poll); }
-    @Override protected void onPause() { super.onPause(); main.removeCallbacks(poll); }
+    /** Réponse du magasin reçue par push : affichée tout de suite. */
+    private final Push.Listener pushListener = d -> { if ("support".equals(d.get("link"))) load(); };
+
+    @Override protected void onResume() { super.onResume(); main.post(poll); Push.LISTENERS.add(pushListener); }
+    @Override protected void onPause() { super.onPause(); main.removeCallbacks(poll); Push.LISTENERS.remove(pushListener); }
 
     private void load() {
         String token = Session.token(this);

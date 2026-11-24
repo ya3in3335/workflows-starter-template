@@ -79,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
                 JSONObject u = r.getJSONObject("user");
                 if (!"admin".equals(u.optString("role"))) throw new Api.ApiException(403, "not_admin");
                 Api.save(this, r.getString("token"), u.getString("username"));
+                AdminPush.register(this);
                 runOnUiThread(this::openMain);
             } catch (Exception e) {
                 runOnUiThread(() -> {

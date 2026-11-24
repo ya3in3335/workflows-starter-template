@@ -136,6 +136,20 @@ final class Notifier {
         }
     }
 
+    /** Affiche une notification reçue par push (FCM). */
+    static void show(Context ctx, int id, String title, String body, String open) {
+        if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(ctx,
+                Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return;
+        if (!enabled(ctx)) return;
+        createChannel(ctx);
+        String text = body == null ? "" : body;
+        NotificationManagerCompat.from(ctx).notify(id, base(ctx, open, id)
+                .setContentTitle(title == null || title.isEmpty() ? Config.STORE_NAME : title)
+                .setContentText(text)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .build());
+    }
+
     private static NotificationCompat.Builder base(Context ctx, String open, int requestCode) {
         Intent i = new Intent(ctx, MainActivity.class)
                 .putExtra(EXTRA_OPEN, open)

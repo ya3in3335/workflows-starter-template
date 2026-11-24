@@ -1,4 +1,4 @@
 • Nouvelle interface, plus élégante, avec effets de verre
 • Connexion sécurisée : « Continuer avec Google » ou e-mail confirmé
-• Barre de navigation en bas : Accueil, Promos, Messages, Alertes, Profil
+• Notifications instantanées : promos, nouveautés et réponses du magasin
 • Les prochaines mises à jour s'installent directement depuis l'application

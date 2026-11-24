@@ -110,3 +110,13 @@ https://github.com/ya3in3335/workflows-starter-template/raw/main/download/2Frere
 - كلمة السر تاع الأدمين ما بقاتش تخدم (`/api/login` و `/api/me/password` يرفضو الأدمين).
 - باش تزيد أدمين جديد (D1): `UPDATE users SET email = 'xxx@gmail.com' WHERE username = 'admin2f';` ولا صنع حساب جديد `role = 'admin'` بإيميلو.
 - Firebase: لازم تطبيق Android `com.deuxfreres.emballage.admin` مسجّل بنفس SHA-1/SHA-256.
+
+## 🔔 الإشعارات الفورية (Firebase Cloud Messaging)
+- الزبائن: كل تطبيق يتسجّل في الموضوع `all` (promos وإعلانات للكل)، ويبعث الـ token تاعو للسيرفر باش يجيه الردّ تاع الشات والإشعارات الخاصة بيه برك.
+- الأدمين: رسالة جديدة من زبون ولا تعليق جديد ← إشعار في نفس الثانية، والضغط عليه يحل الشات مع داك الزبون.
+- السيرفر: secret `FCM_SERVICE_ACCOUNT` في Cloudflare (مفتاح Service Account تاع Firebase — **ما يتحطش في GitHub**). الجدول `push_tokens` (`migrations_004_push.sql`).
+- الفحص الدوري (WorkManager) بقى كاحتياط.
+
+## ✉️ إيميلات Firebase
+- اللغة الافتراضية: الفرنسية. المرسل: «2 Frères Emballage».
+- Google ما يخليش نبدّلو نص الإيميل ولا العنوان (حماية ضد السبام) إلا بـ domain خاص بالمحل.

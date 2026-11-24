@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     private int selectedTab = -1;
     private boolean barHidden;
     private boolean firstLayoutDone;
+    private boolean pushLoggedIn;
 
     private final ActivityResultLauncher<String> askNotifications =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
@@ -151,6 +152,8 @@ public class MainActivity extends AppCompatActivity {
 
         Notifier.createChannel(this);
         Notifier.schedule(this);
+        Push.register(this);
+        Push.LISTENERS.add(pushListener);
         askNotificationPermission();
 
         repo = new ProductRepository(this);
@@ -159,6 +162,15 @@ public class MainActivity extends AppCompatActivity {
         refreshUi(true);
         load();
         if (!handleOpenExtra(getIntent())) Updater.checkOnLaunch(this);
+    }
+
+    /** Push reçu pendant que l'application est ouverte : on rafraîchit tout de suite. */
+    private final Push.Listener pushListener = d -> { if (!isDestroyed()) load(); };
+
+    @Override
+    protected void onDestroy() {
+        Push.LISTENERS.remove(pushListener);
+        super.onDestroy();
     }
 
     @Override
@@ -173,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
         updateBell();
         updateGreeting();
         loadRatings();
+        if (Session.loggedIn(this) != pushLoggedIn) { pushLoggedIn = Session.loggedIn(this); Push.register(this); }
         selectTab(filter.equals(PROMO) ? TAB_PROMOS : TAB_HOME, true);
         Updater.resumePendingInstall(this);
     }
@@ -374,6 +387,8 @@ public class MainActivity extends AppCompatActivity {
         String token = Session.token(this);
         Session.clear(this);
         com.google.firebase.auth.FirebaseAuth.getInstance().signOut();
+        pushLoggedIn = false;
+        Push.register(this);   // le téléphone ne reçoit plus les messages privés de ce compte
         androidx.credentials.CredentialManager.create(this).clearCredentialStateAsync(
                 new androidx.credentials.ClearCredentialStateRequest(), null,
                 androidx.core.content.ContextCompat.getMainExecutor(this),

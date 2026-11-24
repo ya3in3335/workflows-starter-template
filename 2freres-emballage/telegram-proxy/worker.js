@@ -11,6 +11,8 @@
  * 3) Modération des avis depuis Telegram (répondre / supprimer / bloquer).
  *
  * 4) Connexion Firebase (/api/firebase-login) : e-mail vérifié ou Google ; voir migrations_003_firebase.sql.
+ * 5) Connexion admin (/api/admin/google-login) : Google uniquement, e-mail autorisé dans users.email
+ *    (role = 'admin'). Les admins ne peuvent plus se connecter par mot de passe.
  *
  * Variables : APPS_SCRIPT_URL, ADMIN_IDS ("id1,id2"), FIREBASE_PROJECT_ID (optionnel)
  * Secrets : TG_SECRET, BOT_TOKEN
@@ -151,6 +153,7 @@ async function api(request, env, ctx, url) {
   if (path === '/api/register' && method === 'POST') return register(env, body);
   if (path === '/api/login' && method === 'POST') return login(env, body);
   if (path === '/api/firebase-login' && method === 'POST') return firebaseLogin(env, body);
+  if (path === '/api/admin/google-login' && method === 'POST') return adminGoogleLogin(env, body);
   if (path === '/api/ratings' && method === 'GET') return ratings(env);
   if (path === '/api/catalog' && method === 'GET') return catalog(env, url, await auth(request, env));
   if (path === '/api/reviews' && method === 'GET') {
@@ -234,6 +237,7 @@ async function login(env, body) {
   const u = await env.DB.prepare('SELECT * FROM users WHERE username = ?').bind(username).first();
   if (!u || await hashPassword(password, u.salt) !== u.pass_hash) return err('bad_credentials', 401);
   if (u.banned) return err('banned', 403);
+  if (u.role === 'admin') return err('use_google', 403);   // les admins se connectent avec Google
   return newSession(env, u);
 }
 
@@ -243,7 +247,8 @@ async function login(env, body) {
  * Variable optionnelle : FIREBASE_PROJECT_ID (sinon la valeur ci-dessous). */
 const FIREBASE_PROJECT_ID = 'sample-firebase-ai-app-2c019';
 const FIREBASE_JWKS = 'https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com';
-let jwksCache = { keys: null, until: 0 };
+const GOOGLE_JWKS = 'https://www.googleapis.com/oauth2/v3/certs';
+const jwksCache = {};
 
 function b64url(s) {
   s = s.replace(/-/g, '+').replace(/_/g, '/');
@@ -251,25 +256,26 @@ function b64url(s) {
   return Uint8Array.from(atob(s), c => c.charCodeAt(0));
 }
 
-async function firebaseKey(kid) {
-  if (!jwksCache.keys || Date.now() > jwksCache.until) {
-    const r = await fetch(FIREBASE_JWKS);
+async function jwksKey(url, kid) {
+  let c = jwksCache[url];
+  if (!c || Date.now() > c.until) {
+    const r = await fetch(url);
     if (!r.ok) throw new Error('jwks');
     const maxAge = Number((/max-age=(\d+)/.exec(r.headers.get('Cache-Control') || '') || [])[1] || 3600);
-    jwksCache = { keys: (await r.json()).keys || [], until: Date.now() + maxAge * 1000 };
+    c = jwksCache[url] = { keys: (await r.json()).keys || [], until: Date.now() + maxAge * 1000 };
   }
-  return jwksCache.keys.find(k => k.kid === kid);
+  return c.keys.find(k => k.kid === kid);
 }
 
-async function verifyFirebaseToken(env, token) {
-  const projectId = env.FIREBASE_PROJECT_ID || FIREBASE_PROJECT_ID;
+/** Vérifie la signature RS256 d'un JWT avec les clés publiques (JWKS) et renvoie ses claims. */
+async function verifyJwt(token, jwksUrl) {
   const parts = String(token).split('.');
   if (parts.length !== 3) throw new Error('format');
   const dec = new TextDecoder();
   const header = JSON.parse(dec.decode(b64url(parts[0])));
   const claims = JSON.parse(dec.decode(b64url(parts[1])));
   if (header.alg !== 'RS256' || !header.kid) throw new Error('alg');
-  const jwk = await firebaseKey(header.kid);
+  const jwk = await jwksKey(jwksUrl, header.kid);
   if (!jwk) throw new Error('kid');
   const key = await crypto.subtle.importKey('jwk', { kty: jwk.kty, n: jwk.n, e: jwk.e, alg: 'RS256', ext: true },
     { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']);
@@ -277,8 +283,16 @@ async function verifyFirebaseToken(env, token) {
     new TextEncoder().encode(parts[0] + '.' + parts[1]));
   if (!ok) throw new Error('signature');
   const now = Math.floor(Date.now() / 1000);
+  if (!(claims.exp > now) || !(claims.iat <= now + 60)) throw new Error('time');
+  return claims;
+}
+
+async function verifyFirebaseToken(env, token) {
+  const projectId = env.FIREBASE_PROJECT_ID || FIREBASE_PROJECT_ID;
+  const claims = await verifyJwt(token, FIREBASE_JWKS);
+  const now = Math.floor(Date.now() / 1000);
   if (claims.aud !== projectId || claims.iss !== 'https://securetoken.google.com/' + projectId) throw new Error('aud');
-  if (!(claims.exp > now) || !(claims.iat <= now + 60) || !(claims.auth_time <= now + 60)) throw new Error('time');
+  if (!(claims.auth_time <= now + 60)) throw new Error('time');
   if (!claims.sub || typeof claims.sub !== 'string' || claims.sub.length > 128) throw new Error('sub');
   return claims;
 }
@@ -315,6 +329,26 @@ async function firebaseLogin(env, body) {
   } else if (c.email && c.email !== u.email) {
     await env.DB.prepare('UPDATE users SET email = ? WHERE id = ?').bind(String(c.email).slice(0, 200), u.id).run();
   }
+  if (u.banned) return err('banned', 403);
+  return newSession(env, u);
+}
+
+/* ---------- Connexion admin : Google uniquement ----------
+ * L'application admin envoie le Google ID token (Credential Manager). On vérifie la signature
+ * (clés Google), l'audience (client Web OAuth du projet), l'e-mail vérifié, puis on cherche
+ * un compte admin avec cette adresse (colonne users.email). Aucun mot de passe.
+ * Variable optionnelle : GOOGLE_WEB_CLIENT_ID. */
+const GOOGLE_WEB_CLIENT_ID = '956106850630-19isn3en66ig2h9sickrvsvno3q207o5.apps.googleusercontent.com';
+
+async function adminGoogleLogin(env, body) {
+  let c;
+  try { c = await verifyJwt(body.idToken, GOOGLE_JWKS); } catch (e) { return err('bad_token', 401); }
+  if (c.aud !== (env.GOOGLE_WEB_CLIENT_ID || GOOGLE_WEB_CLIENT_ID)) return err('bad_token', 401);
+  if (c.iss !== 'https://accounts.google.com' && c.iss !== 'accounts.google.com') return err('bad_token', 401);
+  if (c.email_verified !== true || !c.email) return err('bad_token', 401);
+  const u = await env.DB.prepare("SELECT * FROM users WHERE role = 'admin' AND lower(email) = lower(?)")
+    .bind(String(c.email)).first();
+  if (!u) return err('not_admin', 403);
   if (u.banned) return err('banned', 403);
   return newSession(env, u);
 }
@@ -415,6 +449,7 @@ async function toggleLike(env, user, reviewId) {
 }
 
 async function changePassword(env, user, body) {
+  if (user.role === 'admin') return err('use_google', 403);
   const u = await env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(user.id).first();
   if (await hashPassword(String(body.oldPassword || ''), u.salt) !== u.pass_hash) return err('bad_credentials', 401);
   const pw = String(body.newPassword || '');

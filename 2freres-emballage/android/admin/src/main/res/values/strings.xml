@@ -4,11 +4,13 @@
     <string name="store">2 Frères Emballage</string>
     <string name="admin_panel">لوحة التحكم</string>
     <string name="username">اسم المستخدم</string>
-    <string name="password">كلمة السر</string>
     <string name="login">دخول</string>
     <string name="logout">خروج</string>
-    <string name="not_admin">هاذ الحساب ماشي أدمين</string>
-    <string name="bad_credentials">اسم المستخدم ولا كلمة السر غالطين</string>
+    <string name="not_admin">حساب Google هذا ماشي مسموح ليه يدخل للوحة التحكم</string>
+    <string name="login_google">الدخول بـ Google</string>
+    <string name="login_google_hint">الدخول للوحة التحكم يكون بحساب Google المسموح ليه برك.\nما كاينش كلمة سر.</string>
+    <string name="google_failed">ما قدرناش ندخلو بـ Google، عاود</string>
+    <string name="google_none">ما كاين حتى حساب Google في التيليفون. زيد واحد من الإعدادات.</string>
     <string name="offline">ما كاينش انترنت، عاود</string>
     <string name="error">صرا مشكل، عاود</string>
     <string name="saved">تسجّل ✅</string>
@@ -85,10 +87,6 @@
 
     <string name="more_reviews">التعليقات والتقييمات</string>
     <string name="more_users">الزبائن</string>
-    <string name="more_password">تبديل كلمة السر</string>
-    <string name="old_password">كلمة السر الحالية</string>
-    <string name="new_password">كلمة السر الجديدة (6 حروف على الأقل)</string>
-    <string name="password_changed">كلمة السر تبدّلت ✅</string>
 
     <string name="no_reviews">ما كاين حتى تعليق</string>
     <string name="reply">ردّ المحل</string>

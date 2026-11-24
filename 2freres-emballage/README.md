@@ -104,3 +104,9 @@ https://github.com/ya3in3335/workflows-starter-template/raw/main/download/2Frere
 - التطبيق: «Continuer avec Google»، ولا إيميل + كلمة سر (لازم يأكد الإيميل قبل ما يدخل)، و «Mot de passe oublié». الحسابات القديمة (يوزر) تخدم من «Ancien compte avec nom d'utilisateur ?».
 - Firebase: المشروع `sample-firebase-ai-app-2c019`، تطبيق Android `com.deuxfreres.emballage` مع SHA-1/SHA-256 تاع `keystore/2freres.jks`. الملف `android/app/google-services.json`.
 - الـ Worker: `/api/firebase-login` يتحقق من توقيع الـ ID token (مفاتيح Google)، المشروع، الصلاحية، والإيميل المأكد، ومن بعد يعطي نفس الـ session تاع التطبيق. الداتاباز: `migrations_003_firebase.sql` (تطبّقت).
+
+## 🛡️ تطبيق الأدمين: دخول بـ Google برك
+- ما كاينش كلمة سر: زر «الدخول بـ Google». الـ Worker (`/api/admin/google-login`) يتحقق من الـ token ويقبل غير الإيميلات المسجّلة في `users.email` للحسابات اللي `role = 'admin'`.
+- كلمة السر تاع الأدمين ما بقاتش تخدم (`/api/login` و `/api/me/password` يرفضو الأدمين).
+- باش تزيد أدمين جديد (D1): `UPDATE users SET email = 'xxx@gmail.com' WHERE username = 'admin2f';` ولا صنع حساب جديد `role = 'admin'` بإيميلو.
+- Firebase: لازم تطبيق Android `com.deuxfreres.emballage.admin` مسجّل بنفس SHA-1/SHA-256.

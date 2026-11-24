@@ -33,7 +33,7 @@
                 android:id="@+id/username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#212121"
+                android:textColor="#FFFFFF"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -50,7 +50,8 @@
                     android:layout_height="wrap_content"
                     android:isIndicator="true"
                     android:numStars="5"
-                    android:progressTint="#F5A623"
+                    android:progressBackgroundTint="#33FFFFFF"
+                    android:progressTint="@color/star"
                     android:stepSize="1" />
 
                 <TextView
@@ -70,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:lineSpacingExtra="2dp"
-        android:textColor="#424242"
+        android:textColor="@color/text_secondary"
         android:textSize="15sp" />
 
     <TextView
@@ -80,7 +81,7 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_reply"
         android:padding="10dp"
-        android:textColor="#3E2F1C"
+        android:textColor="@color/gold"
         android:textSize="14sp"
         android:visibility="gone" />
 
@@ -130,5 +131,5 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="4dp"
-        android:background="#14000000" />
+        android:background="#1AFFFFFF" />
 </LinearLayout>

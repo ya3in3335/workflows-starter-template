@@ -21,7 +21,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONArray;
@@ -32,6 +31,7 @@ import java.util.Locale;
 public class DetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_PRODUCT = "product";
+    public static final String EXTRA_TRANSITION = "transition";
 
     private Product product;
     private final Handler main = new Handler(Looper.getMainLooper());
@@ -55,19 +55,84 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Ui.edgeToEdge(this);
         setContentView(R.layout.activity_detail);
 
         Product p = (Product) getIntent().getSerializableExtra(EXTRA_PRODUCT);
         if (p == null) { finish(); return; }
         product = p;
 
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(p.category.isEmpty() ? Config.STORE_NAME : p.category);
-        toolbar.setNavigationOnClickListener(v -> finish());
+        View topBar = findViewById(R.id.topBar);
+        View orderBar = findViewById(R.id.orderBar);
+        Ui.padTop(topBar);
+        Ui.marginBottom(orderBar);
+        topBar.getBackground().mutate().setAlpha(0);
+        TextView title = findViewById(R.id.title);
+        title.setText(p.name);
+        title.setAlpha(0f);
+        View back = findViewById(R.id.back);
+        Ui.press(back);
+        back.setOnClickListener(v -> supportFinishAfterTransition());
+        View share = findViewById(R.id.share);
+        Ui.press(share);
+        share.setOnClickListener(v -> shareProduct());
 
+        // Élément partagé : l'image arrive depuis la carte du catalogue
         ImageView image = findViewById(R.id.image);
-        Glide.with(this).load(p.image).placeholder(R.drawable.placeholder)
-                .error(R.drawable.placeholder).fitCenter().into(image);
+        String tn = getIntent().getStringExtra(EXTRA_TRANSITION);
+        if (tn != null) {
+            image.setTransitionName(tn);
+            supportPostponeEnterTransition();
+            main.postDelayed(this::supportStartPostponedEnterTransition, 450);   // filet de sécurité
+        }
+        Glide.with(this).load(p.image).placeholder(R.drawable.placeholder).error(R.drawable.placeholder)
+                .dontAnimate().fitCenter()
+                .listener(new com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable>() {
+                    @Override public boolean onLoadFailed(com.bumptech.glide.load.engine.GlideException e, Object m,
+                            com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> t, boolean f) {
+                        supportStartPostponedEnterTransition();
+                        return false;
+                    }
+                    @Override public boolean onResourceReady(android.graphics.drawable.Drawable r, Object m,
+                            com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> t,
+                            com.bumptech.glide.load.DataSource d, boolean f) {
+                        supportStartPostponedEnterTransition();
+                        return false;
+                    }
+                })
+                .into(image);
+        ImageView heroBg = findViewById(R.id.heroBg);
+        Glide.with(this).load(p.image).centerCrop().into(heroBg);
+        if (android.os.Build.VERSION.SDK_INT >= 31) {
+            heroBg.setRenderEffect(android.graphics.RenderEffect.createBlurEffect(60f, 60f,
+                    android.graphics.Shader.TileMode.CLAMP));
+        } else {
+            heroBg.setAlpha(0.25f);
+        }
+
+        // Parallaxe de l'image + barre du haut qui devient du verre
+        View hero = findViewById(R.id.hero);
+        AuroraView aurora = findViewById(R.id.aurora);
+        androidx.core.widget.NestedScrollView scroll = findViewById(R.id.scroll);
+        scroll.setOnScrollChangeListener((androidx.core.widget.NestedScrollView.OnScrollChangeListener)
+                (v, x, y, ox, oy) -> {
+                    image.setTranslationY(y * 0.45f);
+                    heroBg.setTranslationY(y * 0.45f);
+                    float k = 1f + Math.min(0.12f, y / 4000f);
+                    image.setScaleX(k);
+                    image.setScaleY(k);
+                    float f = Math.min(1f, y / (float) Math.max(1, hero.getHeight() - topBar.getHeight() * 2));
+                    topBar.getBackground().setAlpha((int) (255 * f));
+                    title.setAlpha(f);
+                    aurora.setScrollShift(y);
+                });
+
+        // Entrée : les cartes montent en cascade, la barre de commande glisse depuis le bas
+        Ui.rise(findViewById(R.id.content), 180);
+        Ui.rise(findViewById(R.id.reviewsCard), 300);
+        orderBar.setTranslationY(Ui.dp(this, 140));
+        orderBar.animate().translationY(0).setStartDelay(350).setDuration(650)
+                .setInterpolator(new android.view.animation.OvershootInterpolator(1.1f)).start();
 
         ((TextView) findViewById(R.id.name)).setText(p.name);
         ((TextView) findViewById(R.id.price)).setText(Utils.price(p.price));
@@ -83,10 +148,14 @@ public class DetailActivity extends AppCompatActivity {
         }
 
         TextView desc = findViewById(R.id.description);
-        if (p.description.isEmpty()) desc.setVisibility(View.GONE);
+        if (p.description.replaceAll("[\\s.\\-_]", "").isEmpty()) {
+            desc.setVisibility(View.GONE);
+            findViewById(R.id.descTitle).setVisibility(View.GONE);
+        }
         else desc.setText(p.description);
 
         MaterialButton order = findViewById(R.id.order);
+        order.setBackgroundTintList(null);
         order.setOnClickListener(v -> Utils.openWhatsApp(this,
                 getString(R.string.wa_product, p.name, p.id, Utils.price(p.price))));
 
@@ -107,6 +176,13 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
         loadReviews();
+    }
+
+    private void shareProduct() {
+        String text = product.name + " — " + Utils.price(product.price) + "\n"
+                + getString(R.string.share_text, Config.WHATSAPP_NUMBER);
+        startActivity(Intent.createChooser(new Intent(Intent.ACTION_SEND).setType("text/plain")
+                .putExtra(Intent.EXTRA_TEXT, text), getString(R.string.share_app)));
     }
 
     /* ===================== Avis ===================== */
@@ -143,7 +219,9 @@ public class DetailActivity extends AppCompatActivity {
         for (int i = 0; list != null && i < list.length(); i++) {
             JSONObject o = list.optJSONObject(i);
             if (o.optBoolean("mine")) myReview = o;
-            reviewsBox.addView(bindReview(inf.inflate(R.layout.item_review, reviewsBox, false), o));
+            View rv = bindReview(inf.inflate(R.layout.item_review, reviewsBox, false), o);
+            reviewsBox.addView(rv);
+            Ui.rise(rv, 60L * i);
         }
         noReviews.setVisibility(n == 0 ? View.VISIBLE : View.GONE);
         writeReview.setText(myReview != null ? R.string.edit_review : R.string.write_review);

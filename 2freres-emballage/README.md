@@ -84,3 +84,18 @@ https://github.com/ya3in3335/workflows-starter-template/raw/main/download/2Frere
 - التطبيق الرئيسي (2.0): يقرا الكتالوج من الـ Worker (`/api/catalog`)، شاشة بداية متحركة 3D، و«Messages au magasin» (شات مع المحل). الإشعارات الخاصة توصل غير للزبون المعني.
 - الداتاباز: `telegram-proxy/migrations_002_admin.sql` (products, images, notifications, messages). الصور محفوظة في D1 وتتقرا من `/img/<id>`.
 - Google Sheets/Apps Script والبوت ما بقاوش يتحكّمو في التطبيق.
+
+## 🚀 v3 — ديزاين زجاجي + تحديث من داخل التطبيق
+**الديزاين:** خلفية داكنة متحركة (وردي/ذهبي/أخضر) وراء لوحات زجاجية، شريط سفلي عائم (Accueil · Promos · Messages · Alertes · Profil)، الصورة "تطير" من الكارت لصفحة المنتوج، انتقالات بين الشاشات، والكروت تطلع وحدة بعد وحدة.
+
+**التحديث:** كي يتحل التطبيق يقرا `download/version.json`. إذا لقا `versionCode` أكبر من اللي عندو، يخرّج لوحة فيها زر **Mettre à jour** ← يحمّل الـ APK ← يطلب التنصيب. وحتى كي يكون التطبيق مسكّر، يبعث إشعار "Mise à jour disponible".
+
+### كيفاش تنشر تحديث جديد
+1. بدّل الكود لي تحب.
+2. في `android/app/build.gradle` زيد `versionCode` بواحد (مثلاً 9 ← 10) وبدّل `versionName`.
+3. اكتب واش تبدّل في `android/app/update-notes.txt` (يبان للزبائن في اللوحة).
+4. Push لـ `main` ← GitHub Actions يبني الـ APK ويبدّل `download/2FreresEmballage.apk` و `download/version.json` وحدو. الزبائن يشوفو اللوحة في المرة الجاية لي يحلّو فيها التطبيق.
+
+> 🔑 المفتاح `android/keystore/2freres.jks` لازم يبقى هو هو: كل النسخ تتوقّع بيه، وإلا Android يرفض التحديث. ما تمسحوش.
+>
+> ⚠️ النسخ القديمة (2.1 وقبل) كانت موقّعة بمفتاح آخر، دونك الزبائن لي عندهم نسخة قديمة لازم يمسحوها **مرة وحدة** وينصبو v3 من الرابط. من بعد، كل التحديثات تجي من داخل التطبيق.

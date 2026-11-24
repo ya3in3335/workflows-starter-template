@@ -16,11 +16,14 @@ public class NotificationsActivity extends AppCompatActivity {
     private NotificationAdapter adapter;
     private View empty;
     private Catalog catalog;
+    private boolean animated;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Ui.edgeToEdge(this);
         setContentView(R.layout.activity_notifications);
+        Ui.padTop(findViewById(R.id.headerBox));
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
@@ -28,6 +31,7 @@ public class NotificationsActivity extends AppCompatActivity {
         empty = findViewById(R.id.empty);
         RecyclerView list = findViewById(R.id.list);
         list.setLayoutManager(new LinearLayoutManager(this));
+        Ui.padBottom(list, false);
         adapter = new NotificationAdapter(n -> {
             if ("support".equals(n.link)) {
                 startActivity(new Intent(this, SupportActivity.class));
@@ -60,6 +64,10 @@ public class NotificationsActivity extends AppCompatActivity {
         long seen = Notifier.lastSeen(this);
         adapter.submit(c.notifications, seen);
         empty.setVisibility(c.notifications.isEmpty() ? View.VISIBLE : View.GONE);
+        if (!animated && !c.notifications.isEmpty()) {
+            animated = true;
+            ((RecyclerView) findViewById(R.id.list)).scheduleLayoutAnimation();
+        }
         Notifier.markSeen(this, c);
     }
 }

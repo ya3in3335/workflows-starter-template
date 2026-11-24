@@ -28,7 +28,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Ui.edgeToEdge(this);
         setContentView(R.layout.activity_login);
+        Ui.padTop(findViewById(R.id.headerBox));
+        Ui.padBottom(findViewById(R.id.formScroll), true);
+        Ui.stagger(findViewById(R.id.form), 120);
+        Ui.bounce(findViewById(R.id.loginLogo));
         toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
         username = findViewById(R.id.username);
@@ -93,5 +98,9 @@ public class LoginActivity extends AppCompatActivity {
     private void showError(String s) {
         error.setText(s);
         error.setVisibility(View.VISIBLE);
+        // petite secousse « non »
+        error.setTranslationX(0);
+        android.animation.ObjectAnimator.ofFloat(error, "translationX", 0, 18, -14, 10, -6, 0)
+                .setDuration(420).start();
     }
 }

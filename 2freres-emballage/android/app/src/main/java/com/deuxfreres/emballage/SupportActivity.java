@@ -50,7 +50,11 @@ public class SupportActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Ui.edgeToEdge(this);
         setContentView(R.layout.activity_support);
+        Ui.padTop(findViewById(R.id.headerBox));
+        Ui.padBottom(findViewById(R.id.inputBar), true);
+        Ui.press(findViewById(R.id.send));
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
         toolbar.setSubtitle(Config.STORE_NAME);
@@ -90,9 +94,14 @@ public class SupportActivity extends AppCompatActivity {
     private void show(JSONArray arr) {
         if (isDestroyed() || arr == null) return;
         boolean grew = arr.length() != items.size();
+        int before = items.size();
         items.clear();
         for (int i = 0; i < arr.length(); i++) items.add(arr.optJSONObject(i));
         list.getAdapter().notifyDataSetChanged();
+        if (grew && before > 0) list.post(() -> {
+            RecyclerView.ViewHolder h = list.findViewHolderForAdapterPosition(items.size() - 1);
+            if (h != null) Ui.rise(h.itemView, 0);
+        });
         empty.setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
         if (grew && !items.isEmpty()) list.scrollToPosition(items.size() - 1);
     }
@@ -134,8 +143,8 @@ public class SupportActivity extends AppCompatActivity {
             row.setGravity(mine ? Gravity.END : Gravity.START);
             bubble.setBackgroundResource(mine ? R.drawable.bg_bubble_me : R.drawable.bg_bubble_other);
             text.setText(m.optString("text"));
-            text.setTextColor(mine ? 0xFFFFFFFF : 0xFF212121);
-            time.setTextColor(mine ? 0xB3FFFFFF : 0xFF9E9E9E);
+            text.setTextColor(0xFFFFFFFF);
+            time.setTextColor(mine ? 0xCCFFFFFF : 0x99FFFFFF);
             time.setText(DateUtils.getRelativeTimeSpanString(m.optLong("createdAt"), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS));
         }
 

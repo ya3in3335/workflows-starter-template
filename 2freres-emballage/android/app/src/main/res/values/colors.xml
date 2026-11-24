@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="brand">#1E5B3A</color>
-    <color name="brand_dark">#143F28</color>
+    <!-- Identité : charbon + rose (splash) + kraft doré -->
+    <color name="brand">#FF5C8D</color>
+    <color name="brand_dark">#0E0B10</color>
     <color name="kraft">#C8A165</color>
-    <color name="kraft_light">#F4EBDD</color>
-    <color name="promo">#D84315</color>
-    <color name="bg">#FAF7F2</color>
-    <color name="text_secondary">#757575</color>
+    <color name="kraft_light">#F2C879</color>
+    <color name="promo">#FF4D6D</color>
+    <color name="bg">#0E0B10</color>
+    <color name="bg_mid">#17121A</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B3FFFFFF</color>
+    <color name="text_muted">#73FFFFFF</color>
     <color name="whatsapp">#25D366</color>
     <color name="card_dark">#2A2526</color>
     <color name="card_pink">#E0457B</color>
+    <color name="gold">#F2C879</color>
+    <color name="mint">#5EE6A8</color>
+    <color name="glass_top">#26FFFFFF</color>
+    <color name="glass_bottom">#0AFFFFFF</color>
+    <color name="glass_stroke">#2EFFFFFF</color>
+    <color name="glass_strong">#B3141017</color>
+    <color name="star">#FFC94D</color>
 </resources>

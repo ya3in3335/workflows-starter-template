@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.VH> {
 
-    public interface OnClick { void onProduct(Product p); }
+    public interface OnClick { void onProduct(Product p, View image); }
 
     private final List<Product> items = new ArrayList<>();
     private final OnClick onClick;
@@ -63,11 +63,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.VH> {
         double[] r = ratings.get(p.id);
         if (r != null && r[1] > 0) {
             h.rating.setVisibility(View.VISIBLE);
-            h.rating.setText(String.format(Locale.FRANCE, "★ %.1f (%d)", r[0], (int) r[1]));
+            h.rating.setText(String.format(Locale.FRANCE, "★ %.1f · %d", r[0], (int) r[1]));
         } else {
             h.rating.setVisibility(View.GONE);
         }
-        h.itemView.setOnClickListener(v -> onClick.onProduct(p));
+        h.image.setTransitionName("product_" + p.id);
+        h.itemView.setOnClickListener(v -> onClick.onProduct(p, h.image));
     }
 
     @Override public int getItemCount() { return items.size(); }

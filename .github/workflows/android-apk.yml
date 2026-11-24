@@ -7,6 +7,14 @@ on:
       - ".github/workflows/android-apk.yml"
   workflow_dispatch:
 
+# Pour publier la nouvelle version dans download/ (mise à jour automatique des clients)
+permissions:
+  contents: write
+
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -51,3 +59,37 @@ jobs:
         with:
           name: 2freres-admin-apk
           path: 2freres-emballage/android/admin/build/outputs/apk/debug/admin-debug.apk
+
+      # Sur main : si versionCode (app/build.gradle) a augmenté, on remplace download/2FreresEmballage.apk
+      # et on met à jour download/version.json → les clients voient la fenêtre « Mettre à jour ».
+      - name: Publish update for clients
+        if: github.ref == 'refs/heads/main'
+        working-directory: .
+        run: |
+          GRADLE=2freres-emballage/android/app/build.gradle
+          CODE=$(grep -m1 -oP 'versionCode\s+\K\d+' "$GRADLE")
+          NAME=$(grep -m1 -oP 'versionName\s+"\K[^"]+' "$GRADLE")
+          CUR=$(python3 -c "import json;print(json.load(open('download/version.json'))['versionCode'])" 2>/dev/null || echo 0)
+          if [ "$CODE" -le "$CUR" ]; then
+            echo "Version $CODE déjà publiée (actuelle : $CUR) — rien à faire."
+            exit 0
+          fi
+          APK=download/2FreresEmballage.apk
+          cp 2freres-emballage/android/app/build/outputs/apk/debug/app-debug.apk "$APK"
+          CODE="$CODE" NAME="$NAME" python3 - <<'PY'
+          import json, os
+          notes = open('2freres-emballage/android/app/update-notes.txt', encoding='utf-8').read().strip()
+          json.dump({
+              "versionCode": int(os.environ["CODE"]),
+              "versionName": os.environ["NAME"],
+              "notes": notes,
+              "apk": "https://raw.githubusercontent.com/${{ github.repository }}/main/download/2FreresEmballage.apk",
+              "size": os.path.getsize("download/2FreresEmballage.apk"),
+              "mandatory": False,
+          }, open("download/version.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add download/
+          git commit -m "Publish 2 Frères Emballage v$NAME ($CODE)"
+          git push

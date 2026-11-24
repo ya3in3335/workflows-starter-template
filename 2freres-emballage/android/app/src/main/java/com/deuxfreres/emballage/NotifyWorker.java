@@ -17,6 +17,10 @@ public class NotifyWorker extends Worker {
     @Override
     public Result doWork() {
         try {
+            Updater.notifyIfNew(getApplicationContext());
+        } catch (Exception ignored) {
+        }
+        try {
             Catalog c = new ProductRepository(getApplicationContext()).fetch();
             Notifier.notifyNew(getApplicationContext(), c);
             return Result.success();
